@@ -34,8 +34,6 @@ public:
     
     int initialBufferSize;
     int sampleRate;
-    int drawCounter;
-    int bufferCounter;
     float * buffer;
     
     float calcRMS();

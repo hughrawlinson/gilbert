@@ -10,8 +10,6 @@ void gilbert::setup(){
     
 	initialBufferSize = 512;
 	sampleRate = 44100;
-	drawCounter = 0;
-	bufferCounter = 0;
     
     snare.loadSound("sounds/snare.wav");
     kick.loadSound("sounds/kick.wav");
@@ -51,8 +49,6 @@ void gilbert::draw(){
     float avg_power = 0.0f;
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, &magnitude[0], &phase[0], &power[0], &avg_power);
     
-    drawCounter++;
-    
     ofPushStyle();
     ofSetColor(255);
     ofSetLineWidth(1);
@@ -81,11 +77,9 @@ void gilbert::draw(){
     
     ofPushStyle();
 	ofSetColor(255);
-    ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-100);
-    ofDrawBitmapString("SC: " + ofToString(calcSC()),20, ofGetHeight()-80);
-    ofDrawBitmapString("RMS: " + ofToString(calcRMS()), 20, ofGetHeight()-60);
-    ofDrawBitmapString("Buffer Counter: " + ofToString(bufferCounter), 20, ofGetHeight()-40);
-    ofDrawBitmapString("Draw Counter: " + ofToString(drawCounter),20, ofGetHeight()-20);
+    ofDrawBitmapString("SC: " + ofToString(calcSC()),20, ofGetHeight()-60);
+    ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-40);
+    ofDrawBitmapString("RMS: " + ofToString(calcRMS()), 20, ofGetHeight()-20);
     ofPopStyle();
 }
 
@@ -145,7 +139,6 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
 	for(int i=0; i<minBufferSize; i++) {
 		buffer[i] = input[i];
 	}
-	bufferCounter++;
 }
 
 //--------------------------------------------------------------
