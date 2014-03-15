@@ -37,9 +37,12 @@ public:
     int drawCounter;
     int bufferCounter;
     float * buffer;
+//    float roomNoise;
+    float maxRoomRMS;
     
     float calcRMS();
     float calcSC();
+    void calcRoomRMS(float currRMS);
     
     // FFT vars
     fft myfft;
