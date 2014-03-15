@@ -182,7 +182,7 @@ float gilbert::calcSC(){
 
 //--------------------------------------------------------------
 void gilbert::setGUI1(){
-    gui1 = new ofxUICanvas("");
+    gui1 = new ofxUISuperCanvas("");
     gui1->setDrawBack(false);
     
     gui1->addSpectrum("SPECTRUM", power, 256, 0, 6, 298, 100);
