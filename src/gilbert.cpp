@@ -72,9 +72,11 @@ void gilbert::draw(){
     if(calcRMS()>0.1){
         ofLog(OF_LOG_NOTICE,"SC: " + ofToString(calcSC()));
         if(calcSC()>3000){
+//            snare.setVolume(0.1f);
             snare.play();
         }
         else{
+            kick.setVolume(0.1f);
             kick.play();
         }
     }
