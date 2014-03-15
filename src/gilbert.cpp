@@ -1,5 +1,7 @@
 #include "gilbert.h"
 #include "math.h"
+#include <algorithm>
+
 //--------------------------------------------------------------
 void gilbert::setup(){
     
@@ -10,6 +12,12 @@ void gilbert::setup(){
     
 	initialBufferSize = 512;
 	sampleRate = 44100;
+<<<<<<< HEAD
+	drawCounter = 0;
+	bufferCounter = 0;
+    maxRoomRMS = 0;
+=======
+>>>>>>> master
     
     snare.loadSound("sounds/snare.wav");
     kick.loadSound("sounds/kick.wav");
@@ -35,6 +43,8 @@ void gilbert::setup(){
 		}
 	}
     
+
+    
     buffer = new float[initialBufferSize];
 	memset(buffer, 0, initialBufferSize * sizeof(float));
 }
@@ -48,6 +58,16 @@ void gilbert::update(){
 void gilbert::draw(){
     float avg_power = 0.0f;
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, &magnitude[0], &phase[0], &power[0], &avg_power);
+<<<<<<< HEAD
+    drawCounter++;
+    
+    while(ofGetElapsedTimeMillis() < 1000){
+        calcRoomRMS(calcRMS());
+    }
+    
+    ofLog(OF_LOG_NOTICE, "Room Max RMS: %f", maxRoomRMS);
+=======
+>>>>>>> master
     
     ofPushStyle();
     ofSetColor(255);
@@ -65,7 +85,7 @@ void gilbert::draw(){
 	}
     ofPopStyle();
     
-    if(calcRMS()>0.1){
+    if(calcRMS()>maxRoomRMS){
         ofLog(OF_LOG_NOTICE,"SC: " + ofToString(calcSC()));
         if(calcSC()>3000){
             snare.play();
@@ -185,3 +205,11 @@ void gilbert::setGUI1(){
 void gilbert::guiEvent(ofxUIEventArgs &e){
     ofLog(OF_LOG_NOTICE, "Thanks!");
 }
+
+//--------------------------------------------------------------
+void gilbert::calcRoomRMS(float currRMS){
+    if(currRMS > maxRoomRMS){
+        maxRoomRMS = currRMS;
+    }
+}
+
