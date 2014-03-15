@@ -59,6 +59,7 @@
 		1E7456A618D35D2200C59118 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E7456A018D35D2200C59118 /* tinyxmlparser.cpp */; };
 		1E7456A718D35D2200C59118 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E7456A218D35D2200C59118 /* ofxXmlSettings.cpp */; };
 		1E7456A918D35E5400C59118 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E7456A818D35E5400C59118 /* CoreData.framework */; };
+		1EDE60EB18D4A4AD00921812 /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EDE60EA18D4A4AD00921812 /* libsndfile.a */; };
 		28090DEB5109115003E8F1C5 /* UdpSocketWin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5928AA323F5C2690B06C837D /* UdpSocketWin.cpp */; };
 		483908258D00B98B4BE69F07 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78D67A00EB899FAC09430597 /* ofxLabel.cpp */; };
 		4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0AED834CE4DEC5260AF302A2 /* ofxOscParameterSync.cpp */; };
@@ -242,6 +243,9 @@
 		1E7456A218D35D2200C59118 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		1E7456A318D35D2200C59118 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		1E7456A818D35E5400C59118 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		1EDE60E818D4A4AD00921812 /* sndfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sndfile.h; path = ../../../../../../../opt/local/include/sndfile.h; sourceTree = "<group>"; };
+		1EDE60E918D4A4AD00921812 /* sndfile.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = sndfile.hh; path = ../../../../../../../opt/local/include/sndfile.hh; sourceTree = "<group>"; };
+		1EDE60EA18D4A4AD00921812 /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../../../../../../../opt/local/lib/libsndfile.a; sourceTree = "<group>"; };
 		20F35AFADAF0068B067E713F /* OscReceivedElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscReceivedElements.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h; sourceTree = SOURCE_ROOT; };
 		23640F57DF6C4BB6BFC5DA4C /* PacketListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = PacketListener.h; path = ../../../addons/ofxOsc/libs/oscpack/src/ip/PacketListener.h; sourceTree = SOURCE_ROOT; };
 		2834D88A62CD23F3DE2C47D1 /* ofxButton.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxButton.h; path = ../../../addons/ofxGui/src/ofxButton.h; sourceTree = SOURCE_ROOT; };
@@ -332,6 +336,7 @@
 				E45BE9830E8CC7DD009D7055 /* OpenGL.framework in Frameworks */,
 				E45BE9840E8CC7DD009D7055 /* QuickTime.framework in Frameworks */,
 				E4C2424710CC5A17004149E2 /* AppKit.framework in Frameworks */,
+				1EDE60EB18D4A4AD00921812 /* libsndfile.a in Frameworks */,
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
 				E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */,
@@ -654,6 +659,9 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				1EDE60E818D4A4AD00921812 /* sndfile.h */,
+				1EDE60E918D4A4AD00921812 /* sndfile.hh */,
+				1EDE60EA18D4A4AD00921812 /* libsndfile.a */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
@@ -670,8 +678,8 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				1E7453AB18D32BEC00C59118 /* fft.h */,
 				1E7453AC18D32BEC00C59118 /* fft.cpp */,
-				E4B69E1E0A3A1BDC003C02F2 /* gilbert.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* gilbert.h */,
+				E4B69E1E0A3A1BDC003C02F2 /* gilbert.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -972,7 +980,7 @@
 		E4B69B600A3A1757003C02F2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1050,6 +1058,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_52)",
+					/opt/local/lib,
 				);
 				PRODUCT_NAME = mySketchDebug;
 				WRAPPER_EXTENSION = app;
@@ -1059,7 +1068,7 @@
 		E4B69B610A3A1757003C02F2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1136,6 +1145,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_49)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
+					/opt/local/lib,
 				);
 				PRODUCT_NAME = mySketch;
 				WRAPPER_EXTENSION = app;
