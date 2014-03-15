@@ -1,5 +1,6 @@
 #include "gilbert.h"
 #include "math.h"
+
 //--------------------------------------------------------------
 void gilbert::setup(){
     
@@ -10,9 +11,7 @@ void gilbert::setup(){
     
 	initialBufferSize = 512;
 	sampleRate = 44100;
-	drawCounter = 0;
-	bufferCounter = 0;
-    
+    maxRoomRMS = 0;
     snare.loadSound("sounds/snare.wav");
     kick.loadSound("sounds/kick.wav");
     
@@ -37,6 +36,8 @@ void gilbert::setup(){
 		}
 	}
     
+
+    
     buffer = new float[initialBufferSize];
 	memset(buffer, 0, initialBufferSize * sizeof(float));
 }
@@ -50,8 +51,11 @@ void gilbert::update(){
 void gilbert::draw(){
     float avg_power = 0.0f;
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, &magnitude[0], &phase[0], &power[0], &avg_power);
+
     
-    drawCounter++;
+    while(ofGetElapsedTimeMillis() < 1000){
+        calcRoomRMS(calcRMS());
+    }
     
     ofPushStyle();
     ofSetColor(255);
@@ -69,7 +73,7 @@ void gilbert::draw(){
 	}
     ofPopStyle();
     
-    if(calcRMS()>0.1){
+    if(calcRMS()>maxRoomRMS){
         ofLog(OF_LOG_NOTICE,"SC: " + ofToString(calcSC()));
         if(calcSC()>3000){
 //            snare.setVolume(0.1f);
@@ -83,11 +87,9 @@ void gilbert::draw(){
     
     ofPushStyle();
 	ofSetColor(255);
-    ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-100);
-    ofDrawBitmapString("SC: " + ofToString(calcSC()),20, ofGetHeight()-80);
-    ofDrawBitmapString("RMS: " + ofToString(calcRMS()), 20, ofGetHeight()-60);
-    ofDrawBitmapString("Buffer Counter: " + ofToString(bufferCounter), 20, ofGetHeight()-40);
-    ofDrawBitmapString("Draw Counter: " + ofToString(drawCounter),20, ofGetHeight()-20);
+    ofDrawBitmapString("SC: " + ofToString(calcSC()),20, ofGetHeight()-60);
+    ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-40);
+    ofDrawBitmapString("RMS: " + ofToString(calcRMS()), 20, ofGetHeight()-20);
     ofPopStyle();
 }
 
@@ -147,7 +149,6 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
 	for(int i=0; i<minBufferSize; i++) {
 		buffer[i] = input[i];
 	}
-	bufferCounter++;
 }
 
 //--------------------------------------------------------------
@@ -194,3 +195,11 @@ void gilbert::setGUI1(){
 void gilbert::guiEvent(ofxUIEventArgs &e){
     ofLog(OF_LOG_NOTICE, "Thanks!");
 }
+
+//--------------------------------------------------------------
+void gilbert::calcRoomRMS(float currRMS){
+    if(currRMS > maxRoomRMS){
+        maxRoomRMS = currRMS;
+    }
+}
+
