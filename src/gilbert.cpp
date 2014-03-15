@@ -57,6 +57,8 @@ void gilbert::draw(){
         calcRoomRMS(calcRMS());
     }
     
+    ofLog(OF_LOG_NOTICE, "max room rms : %f", maxRoomRMS);
+    
     ofPushStyle();
     ofSetColor(255);
     ofSetLineWidth(1);
@@ -75,12 +77,12 @@ void gilbert::draw(){
     
     if(calcRMS()>maxRoomRMS){
         ofLog(OF_LOG_NOTICE,"SC: " + ofToString(calcSC()));
-        if(calcSC()>3000){
-//            snare.setVolume(0.1f);
+        if(calcSC()>1000){
+            snare.setVolume(calcRMS()*2);
             snare.play();
         }
         else{
-            kick.setVolume(0.1f);
+            kick.setVolume(calcRMS()*2);
             kick.play();
         }
     }
@@ -202,4 +204,6 @@ void gilbert::calcRoomRMS(float currRMS){
         maxRoomRMS = currRMS;
     }
 }
+
+
 
