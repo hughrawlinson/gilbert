@@ -36,9 +36,12 @@ public:
     int initialBufferSize;
     int sampleRate;
     float * buffer;
+//    float roomNoise;
+    float maxRoomRMS;
     
     float calcRMS();
     float calcSC();
+    void calcRoomRMS(float currRMS);
     
     // FFT vars
     fft myfft;
