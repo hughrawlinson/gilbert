@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "fft.h"
 #include "ofxUI.h"
+#include <vector>
 
 #define BUFFER_SIZE 512
 #define NUM_WINDOWS 80
@@ -30,18 +31,22 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void audioIn(float *input, int bufferSize, int nChannels);
+    void analyseHitBuffer(vector<float>& hitBuffer);
+    float calcVectorSC(vector<float>& shortBuffer, int startPoint);
+    float calcVectorRMS(const vector<float>& shortBuffer, int startPoint, int endPoint);
     float* normalizeComplement(float* arr, int size);
     float* normalize(float* arr, int size);
     
     int initialBufferSize;
     int sampleRate;
     float * buffer;
-//    float roomNoise;
     float maxRoomRMS;
     
     float calcRMS();
     float calcSC();
     void calcRoomRMS(float currRMS);
+    Boolean aPressed, bPressed, cPressed, dPressed;
+    std::vector<float> aBuffer, bBuffer, cBuffer, dBuffer;
     
     // FFT vars
     fft myfft;
