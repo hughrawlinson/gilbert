@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>19D44AFC-F1CE-4FB3-AE77-9289C9C7961F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>mySketch</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DA3F8035-442F-45DA-AB10-8DCB8C74B394</key>
+		<string>https://github.com/hughrawlinson/gilbert.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>mySketch.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DA3F8035-442F-45DA-AB10-8DCB8C74B394</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/hughrawlinson/gilbert.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DA3F8035-442F-45DA-AB10-8DCB8C74B394</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DA3F8035-442F-45DA-AB10-8DCB8C74B394</string>
+			<key>IDESourceControlWCCName</key>
+			<string>mySketch</string>
+		</dict>
+	</array>
+</dict>
+</plist>
