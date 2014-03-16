@@ -1,5 +1,37 @@
 #include "gilbert.h"
 #include "math.h"
+#include "sndfile.h"
+#include "sndfile.hh"
+
+//--------------------------------------------------------------
+float* gilbert::normalizeComplement(float* arr, int size){
+    float highestvalue = 0;
+    float* outarr = arr;
+    for (int x = 0; x < size; x++) {
+        if(arr[x]>highestvalue){
+            highestvalue = arr[x];
+        }
+    }
+    for (int x = 0; x < size; x++){
+        arr[x] = 1-(arr[x]/highestvalue);
+    }
+    return outarr;
+}
+
+//--------------------------------------------------------------
+float* gilbert::normalize(float* arr, int size){
+    float highestvalue = 0;
+    float* outarr = arr;
+    for (int x = 0; x < size; x++) {
+        if(arr[x]>highestvalue){
+            highestvalue = arr[x];
+        }
+    }
+    for (int x = 0; x < size; x++){
+        arr[x] = arr[x]/highestvalue;
+    }
+    return outarr;
+}
 
 //--------------------------------------------------------------
 void gilbert::setup(){
@@ -11,9 +43,31 @@ void gilbert::setup(){
     
 	initialBufferSize = 512;
 	sampleRate = 44100;
+    avg_power = 0.0f;
+    
+    string __dir = ofDirectory().getAbsolutePath();
+    
+    SndfileHandle sn = SndfileHandle(__dir+"sounds/snare.wav");
+    SndfileHandle ki = SndfileHandle(__dir+"sounds/kick.wav");
+    
     maxRoomRMS = 0;
     snare.loadSound("sounds/snare.wav");
+    float snbu [sn.frames()];
+    sn.read(snbu, sn.frames());
+    float pow [sn.frames()];
+    float magn [sn.frames()];
+    float phase [sn.frames()];
+    float avg_pow;
+    myfft.powerSpectrum(0, 4096, snbu, 8192, magn, phase, pow, &avg_pow);
+    snspec = normalizeComplement(pow,sn.frames());
+    
     kick.loadSound("sounds/kick.wav");
+    float kibu [ki.frames()];
+    ki.read (kibu, ki.frames());
+    float pow2 [sn.frames()];
+    myfft.powerSpectrum(0, 4096, kibu, 8192, magn, phase, pow2, &avg_pow);
+    normalizeComplement(pow2,ki.frames());
+    kispec = pow2;
     
     
     buffer = new float[initialBufferSize];
@@ -36,9 +90,6 @@ void gilbert::setup(){
 			freq[i][j] = 0;
 		}
 	}
-    
-
-    
 }
 
 //--------------------------------------------------------------
@@ -148,6 +199,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
 	for(int i=0; i<minBufferSize; i++) {
 		buffer[i] = input[i];
 	}
+<<<<<<< HEAD
     
     if(aPressed){
         for(int i=0; i<minBufferSize; i++){
@@ -186,6 +238,18 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             }
         }
     }
+    myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, &magnitude[0], &phase[0], &power[0], &avg_power);
+    power = normalize(power, BUFFER_SIZE);
+    if(kick.getIsPlaying()){
+        for(int x = 0; x < BUFFER_SIZE; x++){
+            power[x] = power[x]*kispec[x];
+        }
+    }
+    if(snare.getIsPlaying()){
+        for(int x = 0; x < BUFFER_SIZE; x++){
+            power[x] = power[x]*snspec[x];
+        }
+    }
 }
 
 
@@ -221,7 +285,9 @@ void gilbert::setGUI1(){
     gui1 = new ofxUISuperCanvas("");
     gui1->setDrawBack(false);
     
-    gui1->addSpectrum("SPECTRUM", power, 256, 0, 6, 298, 100);
+    gui1->addSpectrum("SPECTRUM", power, 256, 0, 3, 298, 100);
+    gui1->addSpectrum("snspec", snspec, 256, 0, 1.0, 298, 100);
+    gui1->addSpectrum("kispec", kispec, 256, 0, 1.0, 298, 100);
     gui1->addLabel("SAMPLES", OFX_UI_FONT_SMALL);
     gui1->setGlobalButtonDimension(50);
     gui1->addToggleMatrix("1X4 MATRIX", 1, 4, 73, 73);
