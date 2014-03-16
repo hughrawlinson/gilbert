@@ -1,3 +1,6 @@
 bin/*.app
+<<<<<<< HEAD
+=======
 mySketch.xcodeproj/project.xcworkspace/xcuserdata/nevosegal.xcuserdatad/UserInterfaceState.xcuserstate
+>>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
 .gitignore

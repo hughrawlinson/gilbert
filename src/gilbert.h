@@ -29,8 +29,9 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    
     void audioIn(float *input, int bufferSize, int nChannels);
+    float* normalizeComplement(float* arr, int size);
+    float* normalize(float* arr, int size);
     
     int initialBufferSize;
     int sampleRate;
@@ -48,9 +49,13 @@ public:
     ofSoundPlayer snare;
     ofSoundPlayer kick;
     
-    float magnitude[BUFFER_SIZE];
-    float phase[BUFFER_SIZE];
-    float power[BUFFER_SIZE];
+    float * magnitude = new float[BUFFER_SIZE];
+    float * phase = new float[BUFFER_SIZE];
+    float * power = new float[BUFFER_SIZE];
+    float avg_power;
+    
+    float *kispec;
+    float *snspec;
     
     float freq[NUM_WINDOWS][BUFFER_SIZE/2];
     float freq_phase[NUM_WINDOWS][BUFFER_SIZE/2];

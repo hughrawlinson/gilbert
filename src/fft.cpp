@@ -444,6 +444,7 @@ void fft::powerSpectrum(int start, int half, float *data, int windowSize,float *
    delete[]out_img;
 }
 
+
 void fft::inversePowerSpectrum(int start, int half, int windowSize, float *finalOut,float *magnitude,float *phase) {
 	int i;
    int windowFunc = 3;
