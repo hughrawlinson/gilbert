@@ -5,23 +5,3 @@
     <XPosition>0.000000000</XPosition>
     <YPosition>0.000000000</YPosition>
 </Canvas>
-<Widget>
-    <Kind>2</Kind>
-    <Name>1X4 MATRIX(0,0)</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>1X4 MATRIX(1,0)</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>1X4 MATRIX(2,0)</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>1X4 MATRIX(3,0)</Name>
-    <Value>0</Value>
-</Widget>

@@ -37,27 +37,15 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void audioIn(float *input, int bufferSize, int nChannels);
-    void analyseHitBuffer(vector<float>& hitBuffer, string drum);
-    float calcVectorSC(vector<float>& shortBuffer, int startPoint);
-    float calcVectorRMS(const vector<float>& shortBuffer, int startPoint, int endPoint);
-    float* normalizeComplement(float* arr, int size);
-    float* normalize(float* arr, int size);
+    
+    float calcRMS();
+    float calcSC();
     
     string lookupClosest(sfs input);
     
     int initialBufferSize;
     int sampleRate;
     float * buffer;
-    float maxRoomRMS;
-    
-    float calcRMS();
-    float calcSC();
-    void calcRoomRMS(float currRMS);
-    Boolean aPressed, bPressed, cPressed, dPressed;
-    std::vector<float> aBuffer, bBuffer, cBuffer, dBuffer;
-    Boolean audioFinished = false;
-    
-    std::vector<sfs> inputSfsSet;
     
     // FFT vars
     fft myfft;
@@ -73,11 +61,6 @@ public:
     float * phase;
     float * power;
     float avg_power;
-    
-    float *kispec;
-    float *snspec;
-    float *haspec;
-    float *crspec;
     
     float freq[NUM_WINDOWS][BUFFER_SIZE/2];
     float freq_phase[NUM_WINDOWS][BUFFER_SIZE/2];
