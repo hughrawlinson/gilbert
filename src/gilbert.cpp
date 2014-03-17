@@ -20,15 +20,17 @@ float* gilbert::normalizeComplement(float* arr, int size){
 
 //--------------------------------------------------------------
 float* gilbert::normalize(float* arr, int size){
-    float highestvalue = 0;
+    float highestValue = 0;
     float* outarr = arr;
     for (int x = 0; x < size; x++) {
-        if(arr[x]>highestvalue){
-            highestvalue = arr[x];
+        if(outarr[x]>highestValue){
+            highestValue = outarr[x];
         }
     }
     for (int x = 0; x < size; x++){
-        arr[x] = arr[x]/highestvalue;
+        if (highestValue > 0){
+            outarr[x] = outarr[x]/highestValue;
+        }
     }
     return outarr;
 }
