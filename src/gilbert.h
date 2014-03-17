@@ -5,7 +5,7 @@
 #include "ofxUI.h"
 #include <vector>
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 256
 #define NUM_WINDOWS 80
 
 typedef struct soundFeatureSet{
@@ -51,6 +51,7 @@ public:
     float maxRoomRMS;
     
     float calcRMS();
+    float calcRMS(float* b, int size);
     float calcSC();
     void calcRoomRMS(float currRMS);
     Boolean aPressed, bPressed, cPressed, dPressed;
