@@ -55,7 +55,10 @@ public:
     float calcSC();
     void calcRoomRMS(float currRMS);
     Boolean aPressed, bPressed, cPressed, dPressed;
-    std::vector<float> aBuffer, bBuffer, cBuffer, dBuffer;
+    std::vector<float> aBuffer = std::vector<float>(88200,0);
+    std::vector<float> bBuffer = std::vector<float>(88200,0);
+    std::vector<float> cBuffer = std::vector<float>(88200,0);
+    std::vector<float> dBuffer = std::vector<float>(88200,0);
     Boolean audioFinished = false;
     
     std::vector<sfs> inputSfsSet;
