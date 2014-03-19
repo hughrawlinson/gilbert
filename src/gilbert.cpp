@@ -56,10 +56,10 @@ void gilbert::setup(){
     myfft.powerSpectrum(0, 4096, kibu, 8192, magn, phase, pow2, &avg_pow);
     kispec = util::normalizeComplement(pow2,ki.frames());
     
-    for(int i=0; i<ki.frames(); i++){
-        ofLog(OF_LOG_NOTICE, "Before: " + ofToString(pow2[i]));
-        ofLog(OF_LOG_NOTICE, "After: " + ofToString(kispec[i]));
-    }
+//    for(int i=0; i<ki.frames(); i++){
+//        ofLog(OF_LOG_NOTICE, "Before: " + ofToString(pow2[i]));
+//        ofLog(OF_LOG_NOTICE, "After: " + ofToString(kispec[i]));
+//    }
     
     hat.loadSound("sounds/hat.wav");
     hat.setMultiPlay(true);
@@ -135,51 +135,6 @@ void gilbert::exit(){
 }
 
 //--------------------------------------------------------------
-void gilbert::keyPressed(int key){
-    ofLog(OF_LOG_NOTICE, "key: %d",key);
-}
-
-//--------------------------------------------------------------
-void gilbert::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void gilbert::dragEvent(ofDragInfo dragInfo){ 
-
-}
-
-//--------------------------------------------------------------
 void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     int currArrPos = 0;
     int minBufferSize = MIN(initialBufferSize, bufferSize);
@@ -189,11 +144,9 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     
     if(aPressed){
         for(int i=0; i<minBufferSize; i++){
-            aBuffer[i] = buffer[i];
+            aBuffer.push_back(input[i]);
             if(aBuffer.size() >= 88200){
-                //ofLog(OF_LOG_NOTICE,"A thing happened");
                 aPressed=false;
-                ofLog(OF_LOG_NOTICE, ofToString(aBuffer.size()));
                 analyseHitBuffer(aBuffer, "a");
                 break;
             }
@@ -360,7 +313,7 @@ void gilbert::guiEvent(ofxUIEventArgs &e){
     if(name == "1X4 MATRIX(0,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
         
-        ofLog(OF_LOG_NOTICE,ofToString("Event Happened: ",toggle->getValue()));
+        ofLog(OF_LOG_NOTICE,"Event Happened: %d", toggle->getValue());
 
         if(toggle->getValue() == 1){
             aPressed = true;
@@ -426,7 +379,7 @@ void gilbert::analyseHitBuffer(vector<float>& hitBuffer, string drum){
         //calculate its rms and store it as an array element.
         rmsInEachBin[i/100] = analysis.calcVectorRMS(hitBuffer,i,i+100);
         
-        //if there is a sound that is louder than 1.5 of the room average rms, it detects it as a hit.
+        //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
         if(rmsInEachBin[i/100] > maxRoomRMS * 10 && !flag){
             hitsc = analysis.calcVectorSC(hitBuffer, i, BUFFER_SIZE)/6500.0f;
             startpoint = i;
@@ -443,5 +396,4 @@ void gilbert::analyseHitBuffer(vector<float>& hitBuffer, string drum){
     }
     sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=analysis.calcRMS(&hitBuffer[startpoint],441)};
     inputSfsSet.push_back(thisssss);
-    
 }

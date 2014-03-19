@@ -684,12 +684,12 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				1E7453AB18D32BEC00C59118 /* fft.h */,
 				1E7453AC18D32BEC00C59118 /* fft.cpp */,
+				7D15AE6918D9A8A6000F3A99 /* util.h */,
+				7D15AE6818D9A8A6000F3A99 /* util.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* gilbert.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* gilbert.cpp */,
-				7D15AE6B18D9ACF3000F3A99 /* gilbertAnalysis.cpp */,
 				7D15AE6C18D9ACF3000F3A99 /* gilbertAnalysis.h */,
-				7D15AE6818D9A8A6000F3A99 /* util.cpp */,
-				7D15AE6918D9A8A6000F3A99 /* util.h */,
+				7D15AE6B18D9ACF3000F3A99 /* gilbertAnalysis.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

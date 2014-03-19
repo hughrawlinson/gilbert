@@ -5,31 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-<<<<<<< HEAD
-	<string>19D44AFC-F1CE-4FB3-AE77-9289C9C7961F</string>
-=======
-	<string>021CB497-8061-40A8-BCFD-9546D06CC9A0</string>
->>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
+	<string>82EF09BC-BC98-45CD-B6C0-0E3341CE0A6B</string>
 	<key>IDESourceControlProjectName</key>
 	<string>mySketch</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-<<<<<<< HEAD
-		<key>DA3F8035-442F-45DA-AB10-8DCB8C74B394</key>
-=======
-		<key>0F641759-3DF5-4D93-BAC9-362588D0FD75</key>
->>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
+		<key>6F14CB94-52D2-407D-A132-2ACAF8DE7F8D</key>
 		<string>https://github.com/hughrawlinson/gilbert.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>mySketch.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-<<<<<<< HEAD
-		<key>DA3F8035-442F-45DA-AB10-8DCB8C74B394</key>
-=======
-		<key>0F641759-3DF5-4D93-BAC9-362588D0FD75</key>
->>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
+		<key>6F14CB94-52D2-407D-A132-2ACAF8DE7F8D</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -37,26 +25,16 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-<<<<<<< HEAD
-	<string>DA3F8035-442F-45DA-AB10-8DCB8C74B394</string>
-=======
-	<string>0F641759-3DF5-4D93-BAC9-362588D0FD75</string>
->>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
+	<string>6F14CB94-52D2-407D-A132-2ACAF8DE7F8D</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-<<<<<<< HEAD
-			<string>DA3F8035-442F-45DA-AB10-8DCB8C74B394</string>
-			<key>IDESourceControlWCCName</key>
-			<string>mySketch</string>
-=======
-			<string>0F641759-3DF5-4D93-BAC9-362588D0FD75</string>
+			<string>6F14CB94-52D2-407D-A132-2ACAF8DE7F8D</string>
 			<key>IDESourceControlWCCName</key>
 			<string>gilbert</string>
->>>>>>> eaf023010f66f5f01d8b45b01eeb640a5624eec7
 		</dict>
 	</array>
 </dict>

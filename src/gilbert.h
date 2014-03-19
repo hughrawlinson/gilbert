@@ -33,15 +33,6 @@ public:
     ofxUICanvas *gui1;
     void guiEvent(ofxUIEventArgs &e);
 
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
     void audioIn(float *input, int bufferSize, int nChannels);
     void analyseHitBuffer(vector<float>& hitBuffer, string drum);
     void calcRoomRMS(float currRMS);
@@ -54,10 +45,21 @@ public:
     float maxRoomRMS;
     
     Boolean aPressed, bPressed, cPressed, dPressed;
-    std::vector<float> aBuffer = std::vector<float>(88200,0);
+    std::vector<float> aBuffer = std::vector<float>(1,0);
     std::vector<float> bBuffer = std::vector<float>(88200,0);
     std::vector<float> cBuffer = std::vector<float>(88200,0);
     std::vector<float> dBuffer = std::vector<float>(88200,0);
+    
+    float *kispec;
+    float *snspec;
+    float *haspec;
+    float *crspec;
+    
+    ofSoundPlayer snare;
+    ofSoundPlayer kick;
+    ofSoundPlayer hat;
+    ofSoundPlayer crash;
+    
     Boolean audioFinished = false;
     
     std::vector<sfs> inputSfsSet;
@@ -67,22 +69,12 @@ public:
     
     gilbertAnalysis analysis;
     
-    ofSoundPlayer snare;
-    ofSoundPlayer kick;
-    ofSoundPlayer hat;
-    ofSoundPlayer crash;
-    
     float bufrms = 0;
     
     float * magnitude;
     float * phase;
     float * power;
     float avg_power;
-    
-    float *kispec;
-    float *snspec;
-    float *haspec;
-    float *crspec;
     
     float freq[NUM_WINDOWS][BUFFER_SIZE/2];
     float freq_phase[NUM_WINDOWS][BUFFER_SIZE/2];
