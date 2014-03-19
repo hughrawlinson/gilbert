@@ -4,6 +4,11 @@
 #include "fft.h"
 #include "ofxUI.h"
 #include <vector>
+#include "math.h"
+#include "sndfile.h"
+#include "sndfile.hh"
+#include "util.h"
+
 
 #define BUFFER_SIZE 256
 #define NUM_WINDOWS 80
@@ -40,8 +45,8 @@ public:
     void analyseHitBuffer(vector<float>& hitBuffer, string drum);
     float calcVectorSC(vector<float>& shortBuffer, int startPoint);
     float calcVectorRMS(const vector<float>& shortBuffer, int startPoint, int endPoint);
-    float* normalizeComplement(float* arr, int size);
-    float* normalize(float* arr, int size);
+//    float* normalizeComplement(float* arr, int size);
+//    float* normalize(float* arr, int size);
     
     string lookupClosest(sfs input);
     

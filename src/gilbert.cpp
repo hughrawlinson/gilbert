@@ -1,39 +1,6 @@
 #include "gilbert.h"
-#include "math.h"
-#include "sndfile.h"
-#include "sndfile.hh"
 
-//--------------------------------------------------------------
-float* gilbert::normalizeComplement(float* arr, int size){
-    float highestvalue = 0;
-    float* outarr = arr;
-    for (int x = 0; x < size; x++) {
-        if(arr[x]>highestvalue){
-            highestvalue = outarr[x];
-        }
-    }
-    for (int x = 0; x < size; x++){
-        outarr[x] = 1-(outarr[x]/highestvalue);
-    }
-    return outarr;
-}
 
-//--------------------------------------------------------------
-float* gilbert::normalize(float* arr, int size){
-    float highestValue = 0;
-    float* outarr = arr;
-    for (int x = 0; x < size; x++) {
-        if(outarr[x]>highestValue){
-            highestValue = outarr[x];
-        }
-    }
-    for (int x = 0; x < size; x++){
-        if (highestValue > 0){
-            outarr[x] = outarr[x]/highestValue;
-        }
-    }
-    return outarr;
-}
 
 //--------------------------------------------------------------
 void gilbert::setup(){
@@ -73,20 +40,26 @@ void gilbert::setup(){
     snare.setMultiPlay(true);
     float snbu [sn.frames()];
     sn.read(snbu, sn.frames());
+    
     float pow [sn.frames()];
     float magn [sn.frames()];
     float phase [sn.frames()];
     float avg_pow;
     myfft.powerSpectrum(0, 4096, snbu, 8192, magn, phase, pow, &avg_pow);
-    snspec = normalizeComplement(pow,sn.frames());
+    snspec = util::normalizeComplement(pow,sn.frames());
     
     kick.loadSound("sounds/kick.wav");
     kick.setMultiPlay(true);
     float kibu [ki.frames()];
     ki.read (kibu, ki.frames());
-    float pow2 [sn.frames()];
+    float pow2 [ki.frames()];
     myfft.powerSpectrum(0, 4096, kibu, 8192, magn, phase, pow2, &avg_pow);
-    kispec = normalizeComplement(pow2,ki.frames());
+    kispec = util::normalizeComplement(pow2,ki.frames());
+    
+    for(int i=0; i<ki.frames(); i++){
+        ofLog(OF_LOG_NOTICE, "Before: " + ofToString(pow2[i]));
+        ofLog(OF_LOG_NOTICE, "After: " + ofToString(kispec[i]));
+    }
     
     hat.loadSound("sounds/hat.wav");
     hat.setMultiPlay(true);
@@ -94,7 +67,7 @@ void gilbert::setup(){
     ha.read (habu, ha.frames());
     float pow3 [ha.frames()];
     myfft.powerSpectrum(0, 4096, habu, 8192, magn, phase, pow3, &avg_pow);
-    haspec = normalizeComplement(pow3,ha.frames());
+    haspec = util::normalizeComplement(pow3,ha.frames());
     
     crash.loadSound("sounds/crash.wav");
     crash.setMultiPlay(true);
@@ -102,7 +75,7 @@ void gilbert::setup(){
     cr.read (crbu, cr.frames());
     float pow4 [cr.frames()];
     myfft.powerSpectrum(0, 4096, crbu, 8192, magn, phase, pow4, &avg_pow);
-    crspec = normalizeComplement(pow4,cr.frames());;
+    crspec = util::normalizeComplement(pow4,cr.frames());;
     
     setGUI1();
     gui1->loadSettings("gui1Settings.xml");
@@ -129,7 +102,7 @@ void gilbert::draw(){
     }
     
     if(ofGetElapsedTimeMillis() < 1500){
-        calcRoomRMS(calcRMS());
+        calcRoomRMS(calcRMS(buffer,BUFFER_SIZE));
     }
     
     ofPushStyle();
@@ -218,9 +191,11 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         for(int i=0; i<minBufferSize; i++){
             aBuffer[i] = buffer[i];
             if(aBuffer.size() >= 88200){
-                ofLog(OF_LOG_NOTICE,"A thing happened");
+                //ofLog(OF_LOG_NOTICE,"A thing happened");
                 aPressed=false;
+                ofLog(OF_LOG_NOTICE, ofToString(aBuffer.size()));
                 analyseHitBuffer(aBuffer, "a");
+
                 break;
             }
         }
@@ -323,21 +298,17 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // run distance
         sfs input1 = {.id="static",.centroid=calcSC()/22500.0f,.rms=bufrms};
         string soundid = lookupClosest(input1);
-        ofLog(OF_LOG_NOTICE,"triggered sound: "+soundid);
+//        ofLog(OF_LOG_NOTICE,"triggered sound: "+soundid);
         if(soundid=="a" && !kick.getIsPlaying()){
-//            kick.setVolume(calcRMS()*2);
             kick.play();
         }
         if(soundid=="b" && !snare.getIsPlaying()){
-//            snare.setVolume(calcRMS()*2);
             snare.play();
         }
         if(soundid=="c" && !hat.getIsPlaying()){
-//            hat.setVolume(calcRMS()*2);
             hat.play();
         }
         if(soundid=="d" && !crash.getIsPlaying()){
-//            crash.setVolume(calcRMS()*2);
             crash.play();
         }
     }
@@ -356,24 +327,13 @@ string gilbert::lookupClosest(sfs input){
             closest = inputSfsSet[i];
         }
     }
-    ofLog(OF_LOG_NOTICE,"distance: "+ofToString(closestDist));
+//    ofLog(OF_LOG_NOTICE,"distance: "+ofToString(closestDist));
     if(closestDist<2){
         return closest.id;
     }
     else{
         return "";
     }
-}
-
-
-//--------------------------------------------------------------
-float gilbert::calcRMS(){
-    float count = 0;
-    for(int i=0; i<initialBufferSize; i++){
-        count += pow(buffer[i],2);
-    }
-    count = count/initialBufferSize;
-    return sqrt(count);
 }
 
 //--------------------------------------------------------------
@@ -429,7 +389,6 @@ void gilbert::setGUI1(){
 void gilbert::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
 	int kind = e.widget->getKind();
-
     
     if(name == "1X4 MATRIX(0,0)")
     {
