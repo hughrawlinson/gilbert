@@ -19,5 +19,6 @@ class util {
 public:
     static float* normalizeComplement(float* arr, int size);
     static float* normalize(float* arr, int size);
+    static float complement(float i);
 };
 #endif /* defined(__mySketch__util__) */

@@ -12,15 +12,9 @@
 
 //--------------------------------------------------------------
 float* util::normalizeComplement(float* arr, int size){
-    float highestvalue = 0;
-    float* outarr = arr;
-    for (int x = 0; x < size; x++) {
-        if(outarr[x]>highestvalue){
-            highestvalue = outarr[x];
-        }
-    }
-    for (int x = 0; x < size; x++){
-        outarr[x] = 1-(outarr[x]/highestvalue);
+    float * outarr = normalize(arr, size);
+    for (int i = 0; i < size; i++) {
+        outarr[i] = complement(outarr[i]);
     }
     return outarr;
 }
@@ -40,4 +34,9 @@ float* util::normalize(float* arr, int size){
         }
     }
     return outarr;
+}
+
+//--------------------------------------------------------------
+float util::complement(float i){
+    return 1.0f - i;
 }

@@ -102,7 +102,7 @@ void gilbert::draw(){
     }
     
     if(ofGetElapsedTimeMillis() < 1500){
-        calcRoomRMS(calcRMS(buffer,BUFFER_SIZE));
+        calcRoomRMS(analysis.calcRMS(buffer,BUFFER_SIZE));
     }
     
     ofPushStyle();
@@ -123,7 +123,7 @@ void gilbert::draw(){
     
     ofPushStyle();
 	ofSetColor(255);
-    ofDrawBitmapString("SC: " + ofToString(calcSC()),20, ofGetHeight()-60);
+    ofDrawBitmapString("SC: " + ofToString(analysis.calcSC(power,256)/6500.0f),20, ofGetHeight()-60);
     ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-40);
     ofDrawBitmapString("RMS: " + ofToString(bufrms), 20, ofGetHeight()-20);
     ofPopStyle();
@@ -195,7 +195,6 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
                 aPressed=false;
                 ofLog(OF_LOG_NOTICE, ofToString(aBuffer.size()));
                 analyseHitBuffer(aBuffer, "a");
-
                 break;
             }
         }
@@ -273,7 +272,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         rmsInEachBin = new float[BUFFER_SIZE/8];
         
         for(int i = 0; i<BUFFER_SIZE-8; i+=8){
-            rmsInEachBin[i/8] = calcRMS(buffer+i, 8);
+            rmsInEachBin[i/8] = analysis.calcRMS(buffer+i, 8);
             if(rmsInEachBin[i/8] > highestBin){
                 highestBin = rmsInEachBin[i/8];
                 highestBinIndex = i;
@@ -296,7 +295,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // grab samples and append to z
             // calc sc on z
             // run distance
-        sfs input1 = {.id="static",.centroid=calcSC()/22500.0f,.rms=bufrms};
+        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256)/6500.0f,.rms=bufrms};
         string soundid = lookupClosest(input1);
 //        ofLog(OF_LOG_NOTICE,"triggered sound: "+soundid);
         if(soundid=="a" && !kick.getIsPlaying()){
@@ -337,38 +336,6 @@ string gilbert::lookupClosest(sfs input){
 }
 
 //--------------------------------------------------------------
-float gilbert::calcRMS(float* b, int size){
-    float count = 0;
-    for(int i=0; i<size; i++){
-        count += pow(b[i],2);
-    }
-    count = count/size;
-    return sqrt(count);
-}
-
-//--------------------------------------------------------------
-float gilbert::calcSC(){
-    float centroid = 0;
-    
-    float sumMags = 0.1;
-    float sumFreqByMags = 0;
-    
-    for(int i = 0; i < BUFFER_SIZE; i++){
-        sumMags += power[i];
-        sumFreqByMags += power[i]*((float)i*(44100.0f/(float)BUFFER_SIZE));
-    }
-    
-    centroid = sumFreqByMags/sumMags;
-    
-    if(isnan(centroid) || isinf(centroid)){
-        return 0.0f;
-    }
-    else{
-        return centroid;
-    }
-}
-
-//--------------------------------------------------------------
 void gilbert::setGUI1(){
     gui1 = new ofxUISuperCanvas("");
     gui1->setDrawBack(false);
@@ -390,8 +357,7 @@ void gilbert::guiEvent(ofxUIEventArgs &e){
     string name = e.widget->getName();
 	int kind = e.widget->getKind();
     
-    if(name == "1X4 MATRIX(0,0)")
-    {
+    if(name == "1X4 MATRIX(0,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
         
         ofLog(OF_LOG_NOTICE,ofToString("Event Happened: ",toggle->getValue()));
@@ -458,11 +424,11 @@ void gilbert::analyseHitBuffer(vector<float>& hitBuffer, string drum){
     for(int i = 0; i<hitBuffer.size()-100; i+=100){
         
         //calculate its rms and store it as an array element.
-        rmsInEachBin[i/100] = calcVectorRMS(hitBuffer,i,i+100);
+        rmsInEachBin[i/100] = analysis.calcVectorRMS(hitBuffer,i,i+100);
         
         //if there is a sound that is louder than 1.5 of the room average rms, it detects it as a hit.
         if(rmsInEachBin[i/100] > maxRoomRMS * 10 && !flag){
-            hitsc = calcVectorSC(hitBuffer, i);
+            hitsc = analysis.calcVectorSC(hitBuffer, i, BUFFER_SIZE)/6500.0f;
             startpoint = i;
             ofLog(OF_LOG_NOTICE, "SC: %f", hitsc);
             flag = true;
@@ -475,51 +441,7 @@ void gilbert::analyseHitBuffer(vector<float>& hitBuffer, string drum){
             ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
         }
     }
-    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],441)};
+    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=analysis.calcRMS(&hitBuffer[startpoint],441)};
     inputSfsSet.push_back(thisssss);
     
 }
-
-//--------------------------------------------------------------
-
-float gilbert::calcVectorRMS(const vector<float>& shortBuffer, int startPoint, int endPoint){
-    float count = 0;
-    endPoint = endPoint+startPoint > shortBuffer.size()?shortBuffer.size()-1:endPoint;
-    for(int i=startPoint; i<endPoint; i++){
-        count += pow(shortBuffer[i],2);
-    }
-    count = count/shortBuffer.size();
-    return sqrt(count);
-}
-
-//--------------------------------------------------------------
-float gilbert::calcVectorSC(vector<float>& exactHit, int startPoint){
-    float * exactHitArray = &exactHit[0];
-    float * magn = new float[BUFFER_SIZE/2];
-    float * phas = new float[BUFFER_SIZE/2];
-    float * pow = new float[BUFFER_SIZE/2];
-    float avg_power;
-    
-    myfft.powerSpectrum(startPoint, 128, exactHitArray, 256, magn, phas, pow, &avg_power);
-    for(int i = 0; i<256 ; i++){
-//        ofLog(OF_LOG_NOTICE, "Freq: "+ofToString(i*44100/256)+", Mag: "+ofToString(pow[i]));
-    }
-    
-    float centroid;
-    
-    float sumMags = 0;
-    float sumFreqByMags = 0;
-    
-    for(int i = 0; i< 128; i++){
-        sumMags += pow[i];
-        sumFreqByMags += pow[i]*((float)i*44100.0/128.0);
-    }
-    
-    centroid = sumFreqByMags/sumMags;
-    
-    return centroid;
-}
-
-
-
-

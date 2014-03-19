@@ -8,6 +8,7 @@
 #include "sndfile.h"
 #include "sndfile.hh"
 #include "util.h"
+#include "gilbertAnalysis.h"
 
 
 #define BUFFER_SIZE 256
@@ -43,10 +44,7 @@ public:
     void gotMessage(ofMessage msg);
     void audioIn(float *input, int bufferSize, int nChannels);
     void analyseHitBuffer(vector<float>& hitBuffer, string drum);
-    float calcVectorSC(vector<float>& shortBuffer, int startPoint);
-    float calcVectorRMS(const vector<float>& shortBuffer, int startPoint, int endPoint);
-//    float* normalizeComplement(float* arr, int size);
-//    float* normalize(float* arr, int size);
+    void calcRoomRMS(float currRMS);
     
     string lookupClosest(sfs input);
     
@@ -55,10 +53,6 @@ public:
     float * buffer;
     float maxRoomRMS;
     
-    float calcRMS();
-    float calcRMS(float* b, int size);
-    float calcSC();
-    void calcRoomRMS(float currRMS);
     Boolean aPressed, bPressed, cPressed, dPressed;
     std::vector<float> aBuffer = std::vector<float>(88200,0);
     std::vector<float> bBuffer = std::vector<float>(88200,0);
@@ -70,6 +64,8 @@ public:
     
     // FFT vars
     fft myfft;
+    
+    gilbertAnalysis analysis;
     
     ofSoundPlayer snare;
     ofSoundPlayer kick;
