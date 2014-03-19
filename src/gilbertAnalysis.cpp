@@ -80,3 +80,36 @@ float gilbertAnalysis::calcSC(float *b, int size){
     }
 }
 
+sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
+    //array to store rms in each bin
+    float* rmsInEachBin;
+    bool flag = false;
+    rmsInEachBin = new float[822];
+    
+    //creating new subvectors;
+    std::vector<float> exactHitBuffer;
+    std::vector<float> sub;
+    float hitsc;
+    int startpoint;
+    
+    for(int i = 0; i<hitBuffer.size()-100; i+=100){
+        
+        //calculate its rms and store it as an array element.
+        rmsInEachBin[i/100] = calcVectorRMS(hitBuffer,i,i+100);
+        
+        //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
+        if(rmsInEachBin[i/100] > ambientRMS * 10 && !flag){
+            hitsc = calcVectorSC(hitBuffer, i, hitBuffer.size())/6500.0f;
+            startpoint = i;
+            flag = true;
+        }
+    }
+//    for(int i = 0; i< 822; i++){
+//        if(rmsInEachBin[i]>ambientRMS){
+//            ofLog(OF_LOG_NOTICE, "RMS index: %d", i);
+//            ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
+//        }
+//    }
+    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],441)};
+    return thisssss;
+}

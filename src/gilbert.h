@@ -14,12 +14,6 @@
 #define BUFFER_SIZE 256
 #define NUM_WINDOWS 80
 
-typedef struct soundFeatureSet{
-    string id;
-    float centroid;
-    float rms;
-} sfs;
-
 class gilbert : public ofBaseApp{
 
 public:
@@ -37,30 +31,25 @@ public:
     void analyseHitBuffer(vector<float>& hitBuffer, string drum);
     void calcRoomRMS(float currRMS);
     
-    string lookupClosest(sfs input);
+    std::string lookupClosest(sfs input);
     
     int initialBufferSize;
     int sampleRate;
     float * buffer;
     float maxRoomRMS;
     
-    Boolean aPressed, bPressed, cPressed, dPressed;
+    bool aPressed, bPressed, cPressed, dPressed;
     std::vector<float> aBuffer = std::vector<float>(1,0);
     std::vector<float> bBuffer = std::vector<float>(88200,0);
     std::vector<float> cBuffer = std::vector<float>(88200,0);
     std::vector<float> dBuffer = std::vector<float>(88200,0);
-    
-    float *kispec;
-    float *snspec;
-    float *haspec;
-    float *crspec;
     
     ofSoundPlayer snare;
     ofSoundPlayer kick;
     ofSoundPlayer hat;
     ofSoundPlayer crash;
     
-    Boolean audioFinished = false;
+    bool audioFinished = false;
     
     std::vector<sfs> inputSfsSet;
     

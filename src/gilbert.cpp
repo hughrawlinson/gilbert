@@ -28,54 +28,16 @@ void gilbert::setup(){
     ofSetFrameRate(60);
     ofBackground(59,89,152);
     
-    string __dir = ofDirectory().getAbsolutePath();
-    
-    SndfileHandle sn = SndfileHandle(__dir+"sounds/snare.wav");
-    SndfileHandle ki = SndfileHandle(__dir+"sounds/kick.wav");
-    SndfileHandle ha = SndfileHandle(__dir+"sounds/hat.wav");
-    SndfileHandle cr = SndfileHandle(__dir+"sounds/crash.wav");
-    
     maxRoomRMS = 0;
+    
     snare.loadSound("sounds/snare.wav");
     snare.setMultiPlay(true);
-    float snbu [sn.frames()];
-    sn.read(snbu, sn.frames());
-    
-    float pow [sn.frames()];
-    float magn [sn.frames()];
-    float phase [sn.frames()];
-    float avg_pow;
-    myfft.powerSpectrum(0, 4096, snbu, 8192, magn, phase, pow, &avg_pow);
-    snspec = util::normalizeComplement(pow,sn.frames());
-    
     kick.loadSound("sounds/kick.wav");
     kick.setMultiPlay(true);
-    float kibu [ki.frames()];
-    ki.read (kibu, ki.frames());
-    float pow2 [ki.frames()];
-    myfft.powerSpectrum(0, 4096, kibu, 8192, magn, phase, pow2, &avg_pow);
-    kispec = util::normalizeComplement(pow2,ki.frames());
-    
-//    for(int i=0; i<ki.frames(); i++){
-//        ofLog(OF_LOG_NOTICE, "Before: " + ofToString(pow2[i]));
-//        ofLog(OF_LOG_NOTICE, "After: " + ofToString(kispec[i]));
-//    }
-    
     hat.loadSound("sounds/hat.wav");
     hat.setMultiPlay(true);
-    float habu [ha.frames()];
-    ha.read (habu, ha.frames());
-    float pow3 [ha.frames()];
-    myfft.powerSpectrum(0, 4096, habu, 8192, magn, phase, pow3, &avg_pow);
-    haspec = util::normalizeComplement(pow3,ha.frames());
-    
     crash.loadSound("sounds/crash.wav");
     crash.setMultiPlay(true);
-    float crbu [cr.frames()];
-    cr.read (crbu, cr.frames());
-    float pow4 [cr.frames()];
-    myfft.powerSpectrum(0, 4096, crbu, 8192, magn, phase, pow4, &avg_pow);
-    crspec = util::normalizeComplement(pow4,cr.frames());;
     
     setGUI1();
     gui1->loadSettings("gui1Settings.xml");
@@ -147,7 +109,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             aBuffer.push_back(input[i]);
             if(aBuffer.size() >= 88200){
                 aPressed=false;
-                analyseHitBuffer(aBuffer, "a");
+                inputSfsSet.push_back(analysis.analyseHitBuffer(aBuffer, "a", maxRoomRMS));
                 break;
             }
         }
@@ -157,7 +119,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             bBuffer[i] = buffer[i];
             if(bBuffer.size() >= 88200){
                 bPressed=false;
-                analyseHitBuffer(bBuffer, "b");
+                inputSfsSet.push_back(analysis.analyseHitBuffer(bBuffer, "b", maxRoomRMS));
                 break;
             }
         }
@@ -167,7 +129,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             cBuffer[i] = buffer[i];
             if(cBuffer.size() >= 88200){
                 cPressed=false;
-                analyseHitBuffer(cBuffer, "c");
+                inputSfsSet.push_back(analysis.analyseHitBuffer(bBuffer, "b", maxRoomRMS));
                 break;
             }
         }
@@ -177,34 +139,12 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             dBuffer[i] = buffer[i];
             if(dBuffer.size() >= 88200){
                 dPressed=false;
-                analyseHitBuffer(dBuffer, "d");
+                inputSfsSet.push_back(analysis.analyseHitBuffer(dBuffer, "d", maxRoomRMS));
                 break;
             }
         }
     }
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
-    
-    //filtering
-    if(kick.getIsPlaying()){
-        for(int x = 0; x < BUFFER_SIZE; x++){
-            power[x] = power[x]*kispec[x];
-        }
-    }
-    else if(snare.getIsPlaying()){
-        for(int x = 0; x < BUFFER_SIZE; x++){
-            power[x] = power[x]*snspec[x];
-        }
-    }
-    else if(hat.getIsPlaying()){
-        for(int x = 0; x < BUFFER_SIZE; x++){
-            power[x] = power[x]*haspec[x];
-        }
-    }
-    else if(crash.getIsPlaying()){
-        for(int x = 0; x < BUFFER_SIZE; x++){
-            power[x] = power[x]*crspec[x];
-        }
-    }
     
     float sum = 0;
     for(int i = 0; i < BUFFER_SIZE; i++){
@@ -250,7 +190,6 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // run distance
         sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256)/6500.0f,.rms=bufrms};
         string soundid = lookupClosest(input1);
-//        ofLog(OF_LOG_NOTICE,"triggered sound: "+soundid);
         if(soundid=="a" && !kick.getIsPlaying()){
             kick.play();
         }
@@ -279,7 +218,6 @@ string gilbert::lookupClosest(sfs input){
             closest = inputSfsSet[i];
         }
     }
-//    ofLog(OF_LOG_NOTICE,"distance: "+ofToString(closestDist));
     if(closestDist<2){
         return closest.id;
     }
@@ -294,10 +232,6 @@ void gilbert::setGUI1(){
     gui1->setDrawBack(false);
     
     gui1->addSpectrum("SPECTRUM", power, 256, 0, 1, 298, 100);
-    gui1->addSpectrum("SPECTRUM", kispec, 256, 0, 1, 298, 100);
-    gui1->addSpectrum("SPECTRUM", snspec, 256, 0, 1, 298, 100);
-    gui1->addSpectrum("SPECTRUM", haspec, 256, 0, 1, 298, 100);
-    gui1->addSpectrum("SPECTRUM", crspec, 256, 0, 1, 298, 100);
     gui1->addLabel("SAMPLES", OFX_UI_FONT_SMALL);
     gui1->setGlobalButtonDimension(50);
     gui1->addToggleMatrix("1X4 MATRIX", 1, 4, 73, 73);
@@ -312,43 +246,20 @@ void gilbert::guiEvent(ofxUIEventArgs &e){
     
     if(name == "1X4 MATRIX(0,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-        
-        ofLog(OF_LOG_NOTICE,"Event Happened: %d", toggle->getValue());
-
-        if(toggle->getValue() == 1){
-            aPressed = true;
-            
-        }
-        else{
-            aPressed = false;
-        }
+        aPressed = toggle->getValue()==1;
     }
     else if (name == "1X4 MATRIX(1,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-        if(toggle->getValue() == 1){
-            bPressed = true;
-        }
-        else{
-            bPressed = false;
-        }
+        bPressed = toggle->getValue()==1;
+        
     }
     else if (name == "1X4 MATRIX(2,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-        if(toggle->getValue() == 1){
-            cPressed = true;
-        }
-        else{
-            cPressed = false;
-        }
+        cPressed = toggle->getValue()==1;
     }
     else if (name == "1X4 MATRIX(3,0)"){
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-        if(toggle->getValue() == 1){
-            dPressed = true;
-        }
-        else{
-            dPressed = false;
-        }
+        dPressed = toggle->getValue()==1;
     }
 }
 
@@ -357,43 +268,4 @@ void gilbert::calcRoomRMS(float currRMS){
     if(currRMS > maxRoomRMS){
         maxRoomRMS = currRMS;
     }
-}
-
-//--------------------------------------------------------------
-
-void gilbert::analyseHitBuffer(vector<float>& hitBuffer, string drum){
-    
-    //array to store rms in each bin
-    float* rmsInEachBin;
-    Boolean flag = false;
-    rmsInEachBin = new float[822];
-    
-    //creating new subvectors;
-    std::vector<float> exactHitBuffer;
-    std::vector<float> sub;
-    float hitsc;
-    int startpoint;
-
-    for(int i = 0; i<hitBuffer.size()-100; i+=100){
-        
-        //calculate its rms and store it as an array element.
-        rmsInEachBin[i/100] = analysis.calcVectorRMS(hitBuffer,i,i+100);
-        
-        //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
-        if(rmsInEachBin[i/100] > maxRoomRMS * 10 && !flag){
-            hitsc = analysis.calcVectorSC(hitBuffer, i, BUFFER_SIZE)/6500.0f;
-            startpoint = i;
-            ofLog(OF_LOG_NOTICE, "SC: %f", hitsc);
-            flag = true;
-        }
-    }
-    ofLog(OF_LOG_NOTICE, "Max Room RMS: %f", maxRoomRMS);
-    for(int i = 0; i< 822; i++){
-        if(rmsInEachBin[i]>maxRoomRMS){
-            ofLog(OF_LOG_NOTICE, "RMS index: %d", i);
-            ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
-        }
-    }
-    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=analysis.calcRMS(&hitBuffer[startpoint],441)};
-    inputSfsSet.push_back(thisssss);
 }
