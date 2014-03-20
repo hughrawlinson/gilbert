@@ -15,7 +15,7 @@ gilbertAnalysis::gilbertAnalysis(){
 
 //--------------------------------------------------------------
 
-float gilbertAnalysis::calcVectorRMS(const std::vector<float>& shortBuffer, int startPoint, int endPoint){
+float gilbertAnalysis::calcRMS(const std::vector<float>& shortBuffer, int startPoint, int endPoint){
     float count = 0;
     endPoint = endPoint+startPoint > shortBuffer.size()?shortBuffer.size()-1:endPoint;
     for(int i=startPoint; i<endPoint; i++){
@@ -26,7 +26,7 @@ float gilbertAnalysis::calcVectorRMS(const std::vector<float>& shortBuffer, int 
 }
 
 //--------------------------------------------------------------
-float gilbertAnalysis::calcVectorSC(std::vector<float>& exactHit, int startPoint, int bsize){
+float gilbertAnalysis::calcSC(std::vector<float>& exactHit, int startPoint, int bsize){
     float * exactHitArray = &exactHit[0];
     float * magn = new float[bsize/2];
     float * phas = new float[bsize/2];
