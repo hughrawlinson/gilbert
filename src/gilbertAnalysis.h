@@ -14,6 +14,7 @@
 #include <math.h>
 #include "fft.h"
 #include "util.h"
+#include "sndfile.h"
 
 typedef struct soundFeatureSet{
     std::string id;
@@ -27,7 +28,7 @@ class gilbertAnalysis {
     
 public:
     gilbertAnalysis();
-    float calcVectorSC(std::vector<float>& shortBuffer, int startPoint, int bsize);
+    float calcVectorSC(std::vector<float>& shortBuffer);
     float calcVectorRMS(const std::vector<float>& exactHit, int startPoint, int endPoint);
     float calcRMS(float* b, int size);
     float calcSC(float *b, int size);
