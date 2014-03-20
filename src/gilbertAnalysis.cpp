@@ -7,6 +7,7 @@
 //
 
 #include "gilbertAnalysis.h"
+#include <stdio.h>
 
 gilbertAnalysis::gilbertAnalysis(){
     lastMags = new float[256];
@@ -91,8 +92,6 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     rmsInEachBin = new float[822];
     
     //creating new subvectors;
-    std::vector<float> exactHitBuffer;
-    std::vector<float> sub;
     float hitsc;
     int startpoint;
     
@@ -102,8 +101,16 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
         rmsInEachBin[i/100] = calcVectorRMS(hitBuffer,i,i+100);
         
         //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
-        if(rmsInEachBin[i/100] > ambientRMS * 10 && !flag){
-            hitsc = calcVectorSC(hitBuffer, i, hitBuffer.size())/6500.0f;
+        if(rmsInEachBin[i/100] > ambientRMS * 5 && !flag){
+            
+            std::vector<float>::const_iterator first = hitBuffer.begin() + i;
+            std::vector<float>::const_iterator last = hitBuffer.begin() + i+8820;
+            std::vector<float> exactHit(first,last);
+
+            writeWAV(exactHit, exactHit.size(), drum);
+            
+            //calcualte SC for the exact hit.
+            hitsc = calcVectorSC(hitBuffer, i, i+8820)/6500.0f;
             startpoint = i;
             flag = true;
         }
@@ -114,7 +121,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
 //            ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
 //        }
 //    }
-    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],441)};
+    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],8820)};
     return thisssss;
 }
 

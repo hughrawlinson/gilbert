@@ -33,6 +33,7 @@ public:
     float calcSC(float *b, int size);
     float calcSF(float *magns, int size);
     sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
+    void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum);
 };
 
 #endif /* defined(__mySketch__gilbertAnalysis__) */
