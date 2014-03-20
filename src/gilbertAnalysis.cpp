@@ -9,6 +9,10 @@
 #include "gilbertAnalysis.h"
 #include <stdio.h>
 
+gilbertAnalysis::gilbertAnalysis(){
+    lastMags = new float[256];
+}
+
 //--------------------------------------------------------------
 
 float gilbertAnalysis::calcVectorRMS(const std::vector<float>& shortBuffer, int startPoint, int endPoint){
@@ -121,29 +125,13 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     return thisssss;
 }
 
-
-void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum){
-//    std::cout <<"Hello" <<std::endl;
-    float* exactHitArray;
-    exactHitArray = new float[buffer.size()];
-    for(int j = 0; j<buffer.size(); j++){
-        exactHitArray[j] = buffer[j];
+float gilbertAnalysis::calcSF(float *magns, int size){
+    float spectralFlux;
+    float* mags = util::normalize(mags,size);
+    
+    for(int i = 0; i < size; i++){
+        spectralFlux += pow(magns[i]-lastMags[i],2);
     }
-    // define the desired output format
-    SF_INFO sfinfo ;
-    sfinfo.channels = 1;
-    sfinfo.samplerate = 44100;
-    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
-    
-    std::string path = "../../../";
-    path+=drum;
-    path+=".wav";
-    std::cout << path.c_str() << std::endl;
-    
-    SNDFILE * outfile = sf_open(path.c_str(), SFM_WRITE, &sfinfo);
-    std::cout << sf_strerror(outfile) << std::endl;
-    sf_count_t count = sf_write_float(outfile, &exactHitArray[0], bufferSize) ;
-    sf_write_sync(outfile);
-    sf_close(outfile);
+    lastMags = mags;
+    return pow(spectralFlux,1.0/size);
 }
-
