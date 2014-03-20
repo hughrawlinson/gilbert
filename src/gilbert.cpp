@@ -90,6 +90,7 @@ void gilbert::draw(){
     ofPopStyle();
 }
 
+//--------------------------------------------------------------
 void gilbert::exit(){
     gui1->saveSettings("gui1Settings.xml");
     delete gui1;
