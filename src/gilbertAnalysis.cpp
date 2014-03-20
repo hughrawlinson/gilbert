@@ -14,46 +14,6 @@ gilbertAnalysis::gilbertAnalysis(){
 }
 
 //--------------------------------------------------------------
-
-float gilbertAnalysis::calcRMS(const std::vector<float>& shortBuffer, int startPoint, int endPoint){
-    float count = 0;
-    endPoint = endPoint+startPoint > shortBuffer.size()?shortBuffer.size()-1:endPoint;
-    for(int i=startPoint; i<endPoint; i++){
-        count += pow(shortBuffer[i],2);
-    }
-    count = count/shortBuffer.size();
-    return sqrt(count);
-}
-
-//--------------------------------------------------------------
-float gilbertAnalysis::calcSC(std::vector<float>& exactHit, int startPoint, int bsize){
-    float * exactHitArray = &exactHit[0];
-    float * magn = new float[bsize/2];
-    float * phas = new float[bsize/2];
-    float * pow = new float[bsize/2];
-    float avg_power;
-    
-    myfft.powerSpectrum(startPoint, 128, exactHitArray, 256, magn, phas, pow, &avg_power);
-    for(int i = 0; i<256 ; i++){
-        //        ofLog(OF_LOG_NOTICE, "Freq: "+ofToString(i*44100/256)+", Mag: "+ofToString(pow[i]));
-    }
-    
-    float centroid;
-    
-    float sumMags = 0;
-    float sumFreqByMags = 0;
-    
-    for(int i = 0; i< 128; i++){
-        sumMags += pow[i];
-        sumFreqByMags += pow[i]*((float)i*44100.0/128.0);
-    }
-    
-    centroid = sumFreqByMags/sumMags;
-    
-    return centroid;
-}
-
-//--------------------------------------------------------------
 float gilbertAnalysis::calcRMS(float* b, int size){
     float count = 0;
     for(int i=0; i<size; i++){
@@ -62,6 +22,13 @@ float gilbertAnalysis::calcRMS(float* b, int size){
     count = count/size;
     return sqrt(count);
 }
+
+//--------------------------------------------------------------
+float gilbertAnalysis::calcRMS(std::vector<float>& shortBuffer){
+    float * shortBufferArray = &shortBuffer[0];
+    return calcRMS(shortBufferArray, shortBuffer.size());
+}
+
 //--------------------------------------------------------------
 float gilbertAnalysis::calcSC(float *b, int size){
     float centroid = 0;
@@ -85,36 +52,12 @@ float gilbertAnalysis::calcSC(float *b, int size){
 }
 
 //--------------------------------------------------------------
-float gilbertAnalysis::calcVectorSC(std::vector<float>& exactHit){
+float gilbertAnalysis::calcSC(std::vector<float>& exactHit){
     float * exactHitArray = &exactHit[0];
-    float * magn = new float[exactHit.size()/2];
-    float * phas = new float[exactHit.size()/2];
-    float * pow = new float[exactHit.size()/2];
-    float avg_power;
-    
-    myfft.powerSpectrum(0, 4410, exactHitArray, 8820, magn, phas, pow, &avg_power);
-//    for(int i = 0; i<256 ; i++){
-//        //        ofLog(OF_LOG_NOTICE, "Freq: "+ofToString(i*44100/256)+", Mag: "+ofToString(pow[i]));
-//    }
-    
-    float centroid;
-    
-    float sumMags = 0;
-    float sumFreqByMags = 0;
-    
-    for(int i = 0; i< 128; i++){
-        sumMags += pow[i];
-        sumFreqByMags += pow[i]*((float)i*44100.0/128.0);
-    }
-    
-    centroid = sumFreqByMags/sumMags;
-    
-    return centroid;
+    return calcSC(exactHitArray,exactHit.size());
 }
 
-
 //---------------------------------------------------------------
-
 sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
     //array to store rms in each bin
     float* rmsInEachBin;
@@ -128,7 +71,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     for(int i = 0; i<hitBuffer.size()-100; i+=100){
         
         //calculate its rms and store it as an array element.
-        rmsInEachBin[i/100] = calcVectorRMS(hitBuffer,i,i+100);
+        rmsInEachBin[i/100] = calcRMS(hitBuffer);
         
         //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
         if(rmsInEachBin[i/100] > ambientRMS * 5 && !flag){
@@ -140,7 +83,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
             writeWAV(exactHit, exactHit.size(), drum);
             
             //calcualte SC for the exact hit.
-            hitsc = calcVectorSC(exactHit);
+            hitsc = calcSC(exactHit);
             startpoint = i;
             flag = true;
         }
@@ -155,6 +98,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     return thisssss;
 }
 
+//--------------------------------------------------------------
 float gilbertAnalysis::calcSF(float *magns, int size){
     float spectralFlux;
     float* mags = util::normalize(mags,size);
@@ -167,7 +111,6 @@ float gilbertAnalysis::calcSF(float *magns, int size){
 }
 
 //--------------------------------------------------------------
-
 void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum){
     //    std::cout <<"Hello" <<std::endl;
     float* exactHitArray;

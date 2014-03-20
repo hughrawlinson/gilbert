@@ -29,9 +29,9 @@ class gilbertAnalysis {
 public:
     gilbertAnalysis();
     float calcRMS(float* b, int size);
-    float calcRMS(const std::vector<float>& exactHit, int startPoint, int endPoint);
+    float calcRMS(std::vector<float>& exactHit);
     float calcSC(float *b, int size);
-    float calcSC(std::vector<float>& shortBuffer, int startPoint, int bsize);
+    float calcSC(std::vector<float>& shortBuffer);
     float calcSF(float *magns, int size);
     sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
     void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum);
