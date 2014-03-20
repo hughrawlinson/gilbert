@@ -33,6 +33,7 @@ public:
     float calcSC(float *b, int size);
     float calcSC(std::vector<float>& shortBuffer);
     float calcSF(float *magns, int size);
+    float calcSF(std::vector<float>&buffer);
     sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
     void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum);
 };

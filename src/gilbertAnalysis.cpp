@@ -24,9 +24,9 @@ float gilbertAnalysis::calcRMS(float* b, int size){
 }
 
 //--------------------------------------------------------------
-float gilbertAnalysis::calcRMS(std::vector<float>& shortBuffer){
-    float * shortBufferArray = &shortBuffer[0];
-    return calcRMS(shortBufferArray, shortBuffer.size());
+float gilbertAnalysis::calcRMS(std::vector<float>& buffer){
+    float * shortBufferArray = &buffer[0];
+    return calcRMS(shortBufferArray, buffer.size());
 }
 
 //--------------------------------------------------------------
@@ -52,9 +52,27 @@ float gilbertAnalysis::calcSC(float *b, int size){
 }
 
 //--------------------------------------------------------------
-float gilbertAnalysis::calcSC(std::vector<float>& exactHit){
-    float * exactHitArray = &exactHit[0];
-    return calcSC(exactHitArray,exactHit.size());
+float gilbertAnalysis::calcSC(std::vector<float>& buffer){
+    float * exactHitArray = &buffer[0];
+    return calcSC(exactHitArray,buffer.size());
+}
+
+//--------------------------------------------------------------
+float gilbertAnalysis::calcSF(float *magns, int size){
+    float spectralFlux;
+    float* mags = util::normalize(mags,size);
+    
+    for(int i = 0; i < size; i++){
+        spectralFlux += pow(magns[i]-lastMags[i],2);
+    }
+    lastMags = mags;
+    return pow(spectralFlux,1.0/size);
+}
+
+//--------------------------------------------------------------
+float gilbertAnalysis::calcSF(std::vector<float>&buffer){
+    float * shortBufferArray = &buffer[0];
+    return calcSF(shortBufferArray,buffer.size());
 }
 
 //---------------------------------------------------------------
@@ -96,18 +114,6 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
 //    }
     sfs thisssss = {.id=drum, .centroid=hitsc, .rms=calcRMS(&hitBuffer[startpoint], 2205)};
     return thisssss;
-}
-
-//--------------------------------------------------------------
-float gilbertAnalysis::calcSF(float *magns, int size){
-    float spectralFlux;
-    float* mags = util::normalize(mags,size);
-    
-    for(int i = 0; i < size; i++){
-        spectralFlux += pow(magns[i]-lastMags[i],2);
-    }
-    lastMags = mags;
-    return pow(spectralFlux,1.0/size);
 }
 
 //--------------------------------------------------------------
