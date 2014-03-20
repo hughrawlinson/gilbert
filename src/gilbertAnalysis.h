@@ -14,6 +14,7 @@
 #include <math.h>
 #include "fft.h"
 #include "util.h"
+#include "sndfile.h"
 
 typedef struct soundFeatureSet{
     std::string id;
