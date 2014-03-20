@@ -83,6 +83,7 @@ void gilbert::draw(){
     
     ofPushStyle();
 	ofSetColor(255);
+    ofDrawBitmapString("SF: " + ofToString(analysis.calcSF(power,256)/6500.0f),20, ofGetHeight()-80);
     ofDrawBitmapString("SC: " + ofToString(analysis.calcSC(power,256)/6500.0f),20, ofGetHeight()-60);
     ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-40);
     ofDrawBitmapString("RMS: " + ofToString(bufrms), 20, ofGetHeight()-20);

@@ -8,6 +8,10 @@
 
 #include "gilbertAnalysis.h"
 
+gilbertAnalysis::gilbertAnalysis(){
+    lastMags = new float[256];
+}
+
 //--------------------------------------------------------------
 
 float gilbertAnalysis::calcVectorRMS(const std::vector<float>& shortBuffer, int startPoint, int endPoint){
@@ -112,4 +116,15 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
 //    }
     sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],441)};
     return thisssss;
+}
+
+float gilbertAnalysis::calcSF(float *magns, int size){
+    float spectralFlux;
+    float* mags = util::normalize(mags,size);
+    
+    for(int i = 0; i < size; i++){
+        spectralFlux += pow(magns[i]-lastMags[i],2);
+    }
+    lastMags = mags;
+    return pow(spectralFlux,1.0/size);
 }
