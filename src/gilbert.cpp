@@ -1,7 +1,5 @@
 #include "gilbert.h"
 
-
-
 //--------------------------------------------------------------
 void gilbert::setup(){
     // 0 output channels,
