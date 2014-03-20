@@ -157,7 +157,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         bufrms = brms;
     }
     
-    if(bufrms >= maxRoomRMS * 10 && inputSfsSet.size()>0){
+    if(bufrms >= maxRoomRMS * 3 && inputSfsSet.size()>0){
         float * rmsInEachBin;
         int highestBinIndex = 0;
         float highestBin = 0;

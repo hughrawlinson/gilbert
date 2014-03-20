@@ -79,7 +79,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
         //calculate its rms and store it as an array element.
         rmsInEachBin[i/100] = calcRMS(hitBuffer);
         //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
-        if(rmsInEachBin[i/100] > ambientRMS*3 && !flag){
+        if(rmsInEachBin[i/100] > ambientRMS*2 && !flag){
             for(int j = 0 ; j < exactHit.size(); j++) {
                 exactHit[j]=hitBuffer[j+i];
             }
