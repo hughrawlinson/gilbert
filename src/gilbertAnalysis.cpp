@@ -7,6 +7,7 @@
 //
 
 #include "gilbertAnalysis.h"
+#include <stdio.h>
 
 //--------------------------------------------------------------
 
@@ -87,8 +88,6 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     rmsInEachBin = new float[822];
     
     //creating new subvectors;
-    std::vector<float> exactHitBuffer;
-    std::vector<float> sub;
     float hitsc;
     int startpoint;
     
@@ -98,8 +97,16 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
         rmsInEachBin[i/100] = calcVectorRMS(hitBuffer,i,i+100);
         
         //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
-        if(rmsInEachBin[i/100] > ambientRMS * 10 && !flag){
-            hitsc = calcVectorSC(hitBuffer, i, hitBuffer.size())/6500.0f;
+        if(rmsInEachBin[i/100] > ambientRMS * 5 && !flag){
+            
+            std::vector<float>::const_iterator first = hitBuffer.begin() + i;
+            std::vector<float>::const_iterator last = hitBuffer.begin() + i+8820;
+            std::vector<float> exactHit(first,last);
+
+            writeWAV(exactHit, exactHit.size(), drum);
+            
+            //calcualte SC for the exact hit.
+            hitsc = calcVectorSC(hitBuffer, i, i+8820)/6500.0f;
             startpoint = i;
             flag = true;
         }
@@ -110,6 +117,33 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
 //            ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
 //        }
 //    }
-    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],441)};
+    sfs thisssss = {.id=drum, .centroid=hitsc/22500.0f, .rms=calcRMS(&hitBuffer[startpoint],8820)};
     return thisssss;
 }
+
+
+void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum){
+//    std::cout <<"Hello" <<std::endl;
+    float* exactHitArray;
+    exactHitArray = new float[buffer.size()];
+    for(int j = 0; j<buffer.size(); j++){
+        exactHitArray[j] = buffer[j];
+    }
+    // define the desired output format
+    SF_INFO sfinfo ;
+    sfinfo.channels = 1;
+    sfinfo.samplerate = 44100;
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    
+    std::string path = "../../../";
+    path+=drum;
+    path+=".wav";
+    std::cout << path.c_str() << std::endl;
+    
+    SNDFILE * outfile = sf_open(path.c_str(), SFM_WRITE, &sfinfo);
+    std::cout << sf_strerror(outfile) << std::endl;
+    sf_count_t count = sf_write_float(outfile, &exactHitArray[0], bufferSize) ;
+    sf_write_sync(outfile);
+    sf_close(outfile);
+}
+

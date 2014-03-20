@@ -116,7 +116,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     }
     else if(bPressed){
         for(int i=0; i<minBufferSize; i++){
-            bBuffer[i] = buffer[i];
+            bBuffer.push_back(input[i]);
             if(bBuffer.size() >= 88200){
                 bPressed=false;
                 inputSfsSet.push_back(analysis.analyseHitBuffer(bBuffer, "b", maxRoomRMS));
@@ -126,17 +126,17 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     }
     else if(cPressed){
         for(int i=0; i<minBufferSize; i++){
-            cBuffer[i] = buffer[i];
+            cBuffer.push_back(input[i]);
             if(cBuffer.size() >= 88200){
                 cPressed=false;
-                inputSfsSet.push_back(analysis.analyseHitBuffer(bBuffer, "b", maxRoomRMS));
+                inputSfsSet.push_back(analysis.analyseHitBuffer(cBuffer, "c", maxRoomRMS));
                 break;
             }
         }
     }
     else if(dPressed){
         for(int i=0; i<minBufferSize; i++){
-            dBuffer[i] = buffer[i];
+            dBuffer.push_back(input[i]);
             if(dBuffer.size() >= 88200){
                 dPressed=false;
                 inputSfsSet.push_back(analysis.analyseHitBuffer(dBuffer, "d", maxRoomRMS));

@@ -13,9 +13,11 @@
 #include <vector>
 #include <math.h>
 #include "fft.h"
+#include "sndfile.h"
+#include "sndfile.hh"
 
 typedef struct soundFeatureSet{
-    string id;
+    std::string id;
     float centroid;
     float rms;
 } sfs;
@@ -29,6 +31,7 @@ public:
     float calcRMS(float* b, int size);
     float calcSC(float *b, int size);
     sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
+    void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum);
 };
 
 #endif /* defined(__mySketch__gilbertAnalysis__) */

@@ -40,9 +40,9 @@ public:
     
     bool aPressed, bPressed, cPressed, dPressed;
     std::vector<float> aBuffer = std::vector<float>(1,0);
-    std::vector<float> bBuffer = std::vector<float>(88200,0);
-    std::vector<float> cBuffer = std::vector<float>(88200,0);
-    std::vector<float> dBuffer = std::vector<float>(88200,0);
+    std::vector<float> bBuffer = std::vector<float>(1,0);
+    std::vector<float> cBuffer = std::vector<float>(1,0);
+    std::vector<float> dBuffer = std::vector<float>(1,0);
     
     ofSoundPlayer snare;
     ofSoundPlayer kick;
