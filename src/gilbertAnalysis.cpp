@@ -59,7 +59,7 @@ float gilbertAnalysis::calcSC(float *b, int size){
         return 0.0f;
     }
     else{
-        return centroid;
+        return centroid/22050.0f;
     }
 }
 

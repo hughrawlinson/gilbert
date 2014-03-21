@@ -177,7 +177,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // grab samples and append to z
             // calc sc on z
             // run distance
-        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256)/6500.0f,.rms=analysis.calcRMS(buffer, BUFFER_SIZE)};
+        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256),.rms=analysis.calcRMS(buffer, BUFFER_SIZE)};
         string soundid = lookupClosest(input1);
         if(soundid=="a" && !kick.getIsPlaying()){
             kick.play();
@@ -197,6 +197,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 string gilbert::lookupClosest(sfs input){
+    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
     sfs closest;
     float dist = 0;
     float closestDist=1000000000.0f;
@@ -207,6 +208,7 @@ string gilbert::lookupClosest(sfs input){
             closest = inputSfsSet[i];
         }
     }
+    std::cout << closest.id + ", " + ofToString(closest.centroid) + ", " + ofToString(closest.rms) << std::endl;
     if(closestDist<2){
         return closest.id;
     }
