@@ -145,6 +145,8 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         }
     }
     
+    myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
+    
     if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS * 3 && inputSfsSet.size()>0){
         float * rmsInEachBin;
         int highestBinIndex = 0;
