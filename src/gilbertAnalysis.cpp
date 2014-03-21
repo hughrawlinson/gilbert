@@ -77,47 +77,47 @@ float gilbertAnalysis::calcSF(std::vector<float>&buffer){
 
 //---------------------------------------------------------------
 sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
+    
     //array to store rms in each bin
     float* rmsInEachBin;
-    bool flag = false;
     rmsInEachBin = new float[822];
-    
-    //creating new subvectors;
-    float hitsc;
-    int startpoint;
+    float hitSC =0,
+    hitRMS = 0,
+    hitSF = 0;
+    std::vector<float> exactHit(2205);
+//    sfs hitInfo;
+    int highestRMSBin = 0;
+    float highestRMSValue = ambientRMS;
+
     
     for(int i = 0; i<hitBuffer.size()-100; i+=100){
-        
-        //calculate its rms and store it as an array element.
-        rmsInEachBin[i/100] = calcRMS(hitBuffer);
-        
-        //if there is a sound that is louder than 10 of the room average rms, it detects it as a hit.
-        if(rmsInEachBin[i/100] > ambientRMS * 5 && !flag){
-            
-            std::vector<float>::const_iterator first = hitBuffer.begin() + i;
-            std::vector<float>::const_iterator last = hitBuffer.begin() + i + 2205;
-            std::vector<float> exactHit(first,last);
 
-            writeWAV(exactHit, exactHit.size(), drum);
-            
-            //calcualte SC for the exact hit.
-            hitsc = calcSC(exactHit);
-            startpoint = i;
-            flag = true;
+        //calculate its rms and store it as an array element.
+        std::vector<float>::const_iterator first = hitBuffer.begin() + i;
+        std::vector<float>::const_iterator last = hitBuffer.begin() + i + 100;
+        std::vector<float> hitBufferBin(first, last);
+        rmsInEachBin[i/100] = calcRMS(hitBufferBin);
+        
+        if(rmsInEachBin[i/100]>highestRMSValue){
+            highestRMSValue = rmsInEachBin[i/100];
+            highestRMSBin = i;
         }
     }
-//    for(int i = 0; i< 822; i++){
-//        if(rmsInEachBin[i]>ambientRMS){
-//            ofLog(OF_LOG_NOTICE, "RMS index: %d", i);
-//            ofLog(OF_LOG_NOTICE, "RMS: %f", rmsInEachBin[i]);
-//        }
-//    }
-    sfs thisssss = {.id=drum, .centroid=hitsc, .rms=calcRMS(&hitBuffer[startpoint], 2205)};
-    return thisssss;
+    
+    for(int j = 0 ; j < exactHit.size(); j++) {
+        exactHit[j]=hitBuffer[j+highestRMSBin];
+    }
+    hitSC = calcSC(exactHit);
+    hitRMS = calcRMS(exactHit);
+//    hitSF = calcSF(&exactHit[0],exactHit.size());
+    sfs hitInfo = {.id=drum, .centroid=hitSC, .rms=hitRMS, .flux = hitSF};
+    writeWAV(exactHit, exactHit.size(), drum, hitInfo);
+    
+    return hitInfo;
 }
 
 //--------------------------------------------------------------
-void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum){
+void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum, sfs info){
     //    std::cout <<"Hello" <<std::endl;
     float* exactHitArray;
     exactHitArray = new float[buffer.size()];
@@ -137,6 +137,9 @@ void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::
     
     SNDFILE * outfile = sf_open(path.c_str(), SFM_WRITE, &sfinfo);
     std::cout << sf_strerror(outfile) << std::endl;
+    char strbuf[50];
+    sprintf(strbuf, "RMS: %f, \n SC: %f \n SF: %f", info.rms, info.centroid, info.flux);
+    sf_set_string(outfile, SF_STR_COMMENT, strbuf);
     sf_count_t count = sf_write_float(outfile, &exactHitArray[0], bufferSize) ;
     sf_write_sync(outfile);
     sf_close(outfile);

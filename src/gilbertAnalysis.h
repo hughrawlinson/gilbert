@@ -20,6 +20,7 @@ typedef struct soundFeatureSet{
     std::string id;
     float centroid;
     float rms;
+    float flux;
 } sfs;
 
 class gilbertAnalysis {
@@ -35,7 +36,8 @@ public:
     float calcSF(float *magns, int size);
     float calcSF(std::vector<float>&buffer);
     sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
-    void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum);
+    void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum, sfs info);
+    
 };
 
 #endif /* defined(__mySketch__gilbertAnalysis__) */

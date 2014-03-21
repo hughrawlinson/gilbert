@@ -1,3 +1,6 @@
 bin/*.app
+bin/a.wav
+bin/b.wav
+bin/c.wav
+bin/d.wav
 mySketch.xcodeproj/project.xcworkspace/xcuserdata/nevosegal.xcuserdatad/UserInterfaceState.xcuserstate
-.gitignore
