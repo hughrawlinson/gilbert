@@ -110,6 +110,7 @@ std::vector<float> gilbertAnalysis::getExactHit(std::vector<float>&hitBuffer, fl
     for(int j = 0 ; j < exactHit.size(); j++) {
         exactHit[j]=hitBuffer[j+highestRMSBin];
     }
+    return exactHit;
 }
 
 //---------------------------------------------------------------
