@@ -33,12 +33,24 @@ float gilbertAnalysis::calcRMS(std::vector<float>& buffer){
 float gilbertAnalysis::calcSC(float *b, int size){
     float centroid = 0;
     
-    float sumMags = 0.1;
+    float samplerateDividedBySize = (44100.0f/(float)size);
+    
+    float sumMags = 0;
     float sumFreqByMags = 0;
     
+    float * magnitude = new float[size];
+	memset(magnitude, 0, size * sizeof(float));
+    float * power = new float[size];
+	memset(power, 0, size * sizeof(float));
+    float * phase = new float[size];
+	memset(phase, 0, size * sizeof(float));
+    float avg_power;
+    
+    myfft.powerSpectrum(0, size/2, b, size, magnitude, phase, power, &avg_power);
+    
     for(int i = 0; i < size; i++){
-        sumMags += b[i];
-        sumFreqByMags += b[i]*((float)i*(44100.0f/(float)size));
+        sumMags += magnitude[i];
+        sumFreqByMags += magnitude[i]*i*samplerateDividedBySize;
     }
     
     centroid = sumFreqByMags/sumMags;
@@ -84,7 +96,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     float hitSC =0,
     hitRMS = 0,
     hitSF = 0;
-    std::vector<float> exactHit(2205);
+    std::vector<float> exactHit(2048);
 //    sfs hitInfo;
     int highestRMSBin = 0;
     float highestRMSValue = ambientRMS;
@@ -109,7 +121,7 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     }
     hitSC = calcSC(exactHit);
     hitRMS = calcRMS(exactHit);
-//    hitSF = calcSF(&exactHit[0],exactHit.size());
+    //hitSF = calcSF(exactHit);
     sfs hitInfo = {.id=drum, .centroid=hitSC, .rms=hitRMS, .flux = hitSF};
     writeWAV(exactHit, exactHit.size(), drum, hitInfo);
     

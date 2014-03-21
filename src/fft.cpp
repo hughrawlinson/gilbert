@@ -116,7 +116,6 @@ void FFT(int NumSamples,
 
    if (!IsPowerOfTwo(NumSamples)) {
       fprintf(stderr, "%d is not a power of two\n", NumSamples);
-      exit(1);
    }
 
    if (!gFFTBitTable)
