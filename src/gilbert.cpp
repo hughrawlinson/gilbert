@@ -84,9 +84,9 @@ void gilbert::draw(){
     ofPushStyle();
 	ofSetColor(255);
     ofDrawBitmapString("SF: " + ofToString(analysis.calcSF(power,256)/6500.0f),20, ofGetHeight()-80);
-    ofDrawBitmapString("SC: " + ofToString(analysis.calcSC(power,256)/6500.0f),20, ofGetHeight()-60);
+    ofDrawBitmapString("SC: " + ofToString(analysis.calcSC(magnitude,256)),20, ofGetHeight()-60);
     ofDrawBitmapString("AP: " + ofToString(avg_power),20, ofGetHeight()-40);
-    ofDrawBitmapString("RMS: " + ofToString(bufrms), 20, ofGetHeight()-20);
+    ofDrawBitmapString("RMS: " + ofToString(analysis.calcRMS(buffer, BUFFER_SIZE)), 20, ofGetHeight()-20);
     ofPopStyle();
 }
 
@@ -144,21 +144,8 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             }
         }
     }
-    myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
     
-    float sum = 0;
-    for(int i = 0; i < BUFFER_SIZE; i++){
-        sum += pow(abs(power[i]/BUFFER_SIZE),2);
-    }
-    float brms = sqrt(sum);
-    if(isnan(brms) || isinf(brms)){
-        bufrms = 0;
-    }
-    else{
-        bufrms = brms;
-    }
-    
-    if(bufrms >= maxRoomRMS * 3 && inputSfsSet.size()>0){
+    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS * 3 && inputSfsSet.size()>0){
         float * rmsInEachBin;
         int highestBinIndex = 0;
         float highestBin = 0;
@@ -188,7 +175,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // grab samples and append to z
             // calc sc on z
             // run distance
-        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256)/6500.0f,.rms=bufrms};
+        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256)/6500.0f,.rms=analysis.calcRMS(buffer, BUFFER_SIZE)};
         string soundid = lookupClosest(input1);
         if(soundid=="a" && !kick.getIsPlaying()){
             kick.play();
