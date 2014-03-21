@@ -61,7 +61,7 @@ void gilbert::draw(){
         return;
     }
     
-    if(ofGetElapsedTimeMillis() < 1500){
+    if(ofGetElapsedTimeMillis() < 1000){
         calcRoomRMS(analysis.calcRMS(buffer,BUFFER_SIZE));
     }
     

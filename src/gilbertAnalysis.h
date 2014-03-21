@@ -20,6 +20,7 @@ typedef struct soundFeatureSet{
     std::string id;
     float centroid;
     float rms;
+    float flux;
 } sfs;
 
 class gilbertAnalysis {
