@@ -87,23 +87,14 @@ float gilbertAnalysis::calcSF(std::vector<float>&buffer){
     return calcSF(shortBufferArray,buffer.size());
 }
 
-//---------------------------------------------------------------
-sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
-    
-    //array to store rms in each bin
+std::vector<float> gilbertAnalysis::getExactHit(std::vector<float>&hitBuffer, float ambientRMS){
+    std::vector<float> exactHit(2048);
     float* rmsInEachBin;
     rmsInEachBin = new float[822];
-    float hitSC =0,
-    hitRMS = 0,
-    hitSF = 0;
-    std::vector<float> exactHit(2048);
-//    sfs hitInfo;
     int highestRMSBin = 0;
     float highestRMSValue = ambientRMS;
-
-    
     for(int i = 0; i<hitBuffer.size()-100; i+=100){
-
+        
         //calculate its rms and store it as an array element.
         std::vector<float>::const_iterator first = hitBuffer.begin() + i;
         std::vector<float>::const_iterator last = hitBuffer.begin() + i + 100;
@@ -119,11 +110,28 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     for(int j = 0 ; j < exactHit.size(); j++) {
         exactHit[j]=hitBuffer[j+highestRMSBin];
     }
-    hitSC = calcSC(exactHit);
-    hitRMS = calcRMS(exactHit);
-    //hitSF = calcSF(exactHit);
-    sfs hitInfo = {.id=drum, .centroid=hitSC, .rms=hitRMS, .flux = hitSF};
-    writeWAV(exactHit, exactHit.size(), drum, hitInfo);
+    return exactHit;
+}
+
+//---------------------------------------------------------------
+sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
+    
+    //array to store rms in each bin
+    float hitSF = 0;
+    
+    std::vector<float> exactHit = getExactHit(hitBuffer, ambientRMS);
+    //hitSF = calcSF(getExactHit(hitBuffer, ambientRMS));
+    sfs hitInfo = {.id=drum, .centroid=calcSC(exactHit), .rms=calcRMS(exactHit), .flux = hitSF};
+    
+    return hitInfo;
+}
+
+sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS, bool writeWav){
+    std::vector<float> exactHit = getExactHit(hitBuffer, ambientRMS);
+    sfs hitInfo = analyseHitBuffer(hitBuffer, drum, ambientRMS);
+    if(writeWav){
+        writeWAV(exactHit, exactHit.size(), drum, hitInfo);
+    }
     
     return hitInfo;
 }
