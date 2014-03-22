@@ -167,7 +167,8 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
                 liveHitBuffer.push_back(buffer[i]);
             }
             if (liveHitBuffer.size() >= 2048){
-                analysis.analyseHitBuffer(liveHitBuffer, "static");
+                sfs info = analysis.analyseHitBuffer(liveHitBuffer, "static");
+                inputSfsSet.push_back(info);
                 hitDetected = false;
             }
         }
