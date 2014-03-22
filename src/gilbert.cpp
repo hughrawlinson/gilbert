@@ -159,20 +159,34 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
     
-    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS * 3 && inputSfsSet.size()>0){
-        float * rmsInEachBin;
-        int highestBinIndex = 0;
-        float highestBin = 0;
-        rmsInEachBin = new float[BUFFER_SIZE/8];
-        
-        for(int i = 0; i<BUFFER_SIZE-8; i+=8){
-            rmsInEachBin[i/8] = analysis.calcRMS(buffer+i, 8);
-            if(rmsInEachBin[i/8] > highestBin){
-                highestBin = rmsInEachBin[i/8];
-                highestBinIndex = i;
+    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS && inputSfsSet.size()>0){
+        std::vector<float> liveHitBuffer = std::vector<float>(1,0);
+        bool hitDetected = true;
+        if(hitDetected){
+            for (int i = 0 ; i<minBufferSize; i++) {
+                liveHitBuffer.push_back(buffer[i]);
             }
-
+            if (liveHitBuffer.size() >= 2048){
+                analysis.analyseHitBuffer(liveHitBuffer, "static");
+                hitDetected = false;
+            }
         }
+        
+//        float * rmsInEachBin;
+//        int highestBinIndex = 0;
+//        float highestBin = 0;
+//        rmsInEachBin = new float[BUFFER_SIZE/8];
+//        
+//        for(int i = 0; i<BUFFER_SIZE-8; i+=8){
+//            rmsInEachBin[i/8] = analysis.calcRMS(buffer+i, 8);
+//            if(rmsInEachBin[i/8] > highestBin){
+//                highestBin = rmsInEachBin[i/8];
+//                highestBinIndex = i;
+//            }
+//
+//        }
+        
+        
 //        ofLog(OF_LOG_NOTICE, "Highest Bin: %d", highestBinIndex);
 //        ofLog(OF_LOG_NOTICE, "Highest Value: %f", highestBin);
 
