@@ -118,8 +118,6 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
     
     //array to store rms in each bin
     float hitSF = 0;
-    
-    //hitSF = calcSF(getExactHit(hitBuffer, ambientRMS));
     sfs hitInfo = {.id=drum, .centroid=calcSC(hitBuffer), .rms=calcRMS(hitBuffer), .flux = hitSF};
     
     return hitInfo;
