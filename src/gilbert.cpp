@@ -158,20 +158,23 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     }
     
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
-    
+    //should be an instance variable because scope
+    //std::vector<float> liveHitBuffer = std::vector<float>(1,0);
     if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS && inputSfsSet.size()>0){
-        std::vector<float> liveHitBuffer = std::vector<float>(1,0);
-        bool hitDetected = true;
-        if(hitDetected){
-            for (int i = 0 ; i<minBufferSize; i++) {
-                liveHitBuffer.push_back(buffer[i]);
-            }
-            if (liveHitBuffer.size() >= 2048){
-                sfs info = analysis.analyseHitBuffer(liveHitBuffer, "static");
-                inputSfsSet.push_back(info);
-                hitDetected = false;
-            }
+    	//make this an instance variable
+        hitDetected = true;
+    }
+    if(hitDetected){
+        for (int i = 0 ; i<bufferSize; i++) {
+            liveHitBuffer.push_back(buffer[i]);
         }
+        if (liveHitBuffer.size() >= 2048){
+            sfs info = analysis.analyseHitBuffer(liveHitBuffer, "static");
+            inputSfsSet.push_back(info);
+            liveHitBuffer = std::vector<float>(1,0);
+            hitDetected = false;
+        }
+    }
         
 //        float * rmsInEachBin;
 //        int highestBinIndex = 0;
