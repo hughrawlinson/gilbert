@@ -114,24 +114,13 @@ std::vector<float> gilbertAnalysis::getExactHit(std::vector<float>&hitBuffer, fl
 }
 
 //---------------------------------------------------------------
-sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS){
+sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum){
     
     //array to store rms in each bin
     float hitSF = 0;
     
-    std::vector<float> exactHit = getExactHit(hitBuffer, ambientRMS);
     //hitSF = calcSF(getExactHit(hitBuffer, ambientRMS));
-    sfs hitInfo = {.id=drum, .centroid=calcSC(exactHit), .rms=calcRMS(exactHit), .flux = hitSF};
-    
-    return hitInfo;
-}
-
-sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS, bool writeWav){
-    std::vector<float> exactHit = getExactHit(hitBuffer, ambientRMS);
-    sfs hitInfo = analyseHitBuffer(hitBuffer, drum, ambientRMS);
-    if(writeWav){
-        writeWAV(exactHit, exactHit.size(), drum, hitInfo);
-    }
+    sfs hitInfo = {.id=drum, .centroid=calcSC(hitBuffer), .rms=calcRMS(hitBuffer), .flux = hitSF};
     
     return hitInfo;
 }

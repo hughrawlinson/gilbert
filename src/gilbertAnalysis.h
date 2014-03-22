@@ -36,8 +36,7 @@ public:
     float calcSF(float *magns, int size);
     float calcSF(std::vector<float>&buffer);
     std::vector<float> getExactHit(std::vector<float>&hitBuffer, float ambientRMS);
-    sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS);
-    sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum, float ambientRMS,bool writeWav);
+    sfs analyseHitBuffer(std::vector<float>& hitBuffer, std::string drum);
     void writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum, sfs info);
     
 };
