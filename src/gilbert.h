@@ -50,6 +50,7 @@ public:
     ofSoundPlayer crash;
     
     bool audioFinished = false;
+    bool hitDetected = false;
     
     std::vector<sfs> inputSfsSet;
     
