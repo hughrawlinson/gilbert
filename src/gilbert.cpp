@@ -109,7 +109,10 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             aBuffer.push_back(input[i]);
             if(aBuffer.size() >= 88200){
                 aPressed=false;
-                inputSfsSet.push_back(analysis.analyseHitBuffer(aBuffer, "a", maxRoomRMS));
+                std::vector<float> aExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                sfs info = analysis.analyseHitBuffer(aExactHit, "a");
+                inputSfsSet.push_back(info);
+                analysis.writeWAV(aExactHit, aExactHit.size(), "a", info);
                 break;
             }
         }
@@ -119,7 +122,10 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             bBuffer.push_back(input[i]);
             if(bBuffer.size() >= 88200){
                 bPressed=false;
-                inputSfsSet.push_back(analysis.analyseHitBuffer(bBuffer, "b", maxRoomRMS));
+                std::vector<float> bExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                sfs info = analysis.analyseHitBuffer(bExactHit, "b");
+                inputSfsSet.push_back(info);
+                analysis.writeWAV(bExactHit, bExactHit.size(), "b", info);
                 break;
             }
         }
@@ -129,7 +135,10 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             cBuffer.push_back(input[i]);
             if(cBuffer.size() >= 88200){
                 cPressed=false;
-                inputSfsSet.push_back(analysis.analyseHitBuffer(cBuffer, "c", maxRoomRMS));
+                std::vector<float> cExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                sfs info = analysis.analyseHitBuffer(cExactHit, "c");
+                inputSfsSet.push_back(info);
+                analysis.writeWAV(cExactHit, cExactHit.size(), "c", info);
                 break;
             }
         }
@@ -139,7 +148,10 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             dBuffer.push_back(input[i]);
             if(dBuffer.size() >= 88200){
                 dPressed=false;
-                inputSfsSet.push_back(analysis.analyseHitBuffer(dBuffer, "d", maxRoomRMS));
+                std::vector<float> dExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                sfs info = analysis.analyseHitBuffer(dExactHit, "d");
+                inputSfsSet.push_back(info);
+                analysis.writeWAV(dExactHit, dExactHit.size(), "d", info);
                 break;
             }
         }
