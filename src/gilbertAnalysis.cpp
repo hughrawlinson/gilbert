@@ -125,7 +125,6 @@ sfs gilbertAnalysis::analyseHitBuffer(std::vector<float>& hitBuffer, std::string
 
 //--------------------------------------------------------------
 void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::string drum, sfs info){
-    //    std::cout <<"Hello" <<std::endl;
     float* exactHitArray;
     exactHitArray = new float[buffer.size()];
     for(int j = 0; j<buffer.size(); j++){
@@ -147,7 +146,7 @@ void gilbertAnalysis::writeWAV(std::vector<float>& buffer, int bufferSize, std::
     char strbuf[50];
     sprintf(strbuf, "RMS: %f, \n SC: %f \n SF: %f", info.rms, info.centroid, info.flux);
     sf_set_string(outfile, SF_STR_COMMENT, strbuf);
-    sf_count_t count = sf_write_float(outfile, &exactHitArray[0], bufferSize) ;
+    sf_count_t count = sf_write_float(outfile, &exactHitArray[0], bufferSize);
     sf_write_sync(outfile);
     sf_close(outfile);
 }

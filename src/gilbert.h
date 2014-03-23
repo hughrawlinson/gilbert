@@ -36,24 +36,24 @@ public:
     int initialBufferSize;
     int sampleRate;
     float * buffer;
-    float maxRoomRMS;
+    double maxRoomRMS;
     
     bool aPressed, bPressed, cPressed, dPressed;
     std::vector<float> aBuffer = std::vector<float>(1,0);
     std::vector<float> bBuffer = std::vector<float>(1,0);
     std::vector<float> cBuffer = std::vector<float>(1,0);
     std::vector<float> dBuffer = std::vector<float>(1,0);
-    std::vector<float> liveHitBuffer = std::vector<float>(1,0);
+    std::vector<float> liveHitBuffer = std::vector<float>(0,0);
     
     ofSoundPlayer snare;
     ofSoundPlayer kick;
     ofSoundPlayer hat;
     ofSoundPlayer crash;
     
-    bool audioFinished = false;
     bool hitDetected = false;
     
     std::vector<sfs> inputSfsSet;
+    sfs liveHit;
     
     // FFT vars
     fft myfft;
