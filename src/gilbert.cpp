@@ -158,10 +158,8 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     }
     
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
-    //should be an instance variable because scope
-    //std::vector<float> liveHitBuffer = std::vector<float>(1,0);
+    
     if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS && inputSfsSet.size()>0){
-    	//make this an instance variable
         hitDetected = true;
     }
     if(hitDetected){
