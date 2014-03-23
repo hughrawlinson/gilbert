@@ -175,25 +175,6 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             hitDetected = false;
         }
     }
-        
-//        float * rmsInEachBin;
-//        int highestBinIndex = 0;
-//        float highestBin = 0;
-//        rmsInEachBin = new float[BUFFER_SIZE/8];
-//        
-//        for(int i = 0; i<BUFFER_SIZE-8; i+=8){
-//            rmsInEachBin[i/8] = analysis.calcRMS(buffer+i, 8);
-//            if(rmsInEachBin[i/8] > highestBin){
-//                highestBin = rmsInEachBin[i/8];
-//                highestBinIndex = i;
-//            }
-//
-//        }
-        
-        
-//        ofLog(OF_LOG_NOTICE, "Highest Bin: %d", highestBinIndex);
-//        ofLog(OF_LOG_NOTICE, "Highest Value: %f", highestBin);
-
 
         // get start time -> how
         // aside: how = run rms on like 16 samples
