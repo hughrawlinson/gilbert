@@ -43,6 +43,7 @@ public:
     std::vector<float> bBuffer = std::vector<float>(1,0);
     std::vector<float> cBuffer = std::vector<float>(1,0);
     std::vector<float> dBuffer = std::vector<float>(1,0);
+    std::vector<float> liveHitBuffer = std::vector<float>(1,0);
     
     ofSoundPlayer snare;
     ofSoundPlayer kick;
@@ -50,6 +51,7 @@ public:
     ofSoundPlayer crash;
     
     bool audioFinished = false;
+    bool hitDetected = false;
     
     std::vector<sfs> inputSfsSet;
     
