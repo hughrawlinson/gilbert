@@ -155,22 +155,21 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     }
     
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
-
-    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS*5 && inputSfsSet.size()>0 && !hitDetected){
-        hitDetected = true;
+    
+    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS*5 && inputSfsSet.size()>0){
+            hitDetected = true;
         //ofLog(OF_LOG_NOTICE, "Max Room : %f", maxRoomRMS);
     }
     
     if(hitDetected){
         for (int i = 0 ; i<bufferSize; i++) {
             liveHitBuffer.push_back(buffer[i]);
-//            std::cout <<liveHitBuffer.size() << std::endl;
         }
         if (liveHitBuffer.size() >= 2048){
 
             liveHit =  analysis.analyseHitBuffer(liveHitBuffer, "static");
             liveHitBuffer = std::vector<float>(0,0);
-            
+
             string soundid = lookupClosest(liveHit);
             if(soundid=="a" && !kick.getIsPlaying()){
                 kick.play();
@@ -210,7 +209,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 string gilbert::lookupClosest(sfs input){
-    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
+//    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
     sfs closest;
     float dist = 0;
     float closestDist=1000000000.0f;
@@ -222,8 +221,8 @@ string gilbert::lookupClosest(sfs input){
             std::cout << closestDist << std::endl;
         }
     }
-//    std::cout << closest.id + ", " + ofToString(closest.centroid) + ", " + ofToString(closest.rms) << std::endl;
-    if(closestDist<2){
+    std::cout << closest.id + ", " + ofToString(closest.centroid) + ", " + ofToString(closest.rms) << std::endl;
+    if(closestDist<0.15){
         return closest.id;
     }
     else{
