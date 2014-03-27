@@ -208,7 +208,7 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
   
 
 //--------------------------------------------------------------
-string gilbert::lookupClosest(sfs input){
+string gilbert::lookupClosest(sfs input){git
 //    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
     sfs closest;
     float dist = 0;
@@ -222,7 +222,7 @@ string gilbert::lookupClosest(sfs input){
         }
     }
     std::cout << closest.id + ", " + ofToString(closest.centroid) + ", " + ofToString(closest.rms) << std::endl;
-    if(closestDist<0.15){
+    if(closestDist<0.5){
         return closest.id;
     }
     else{
