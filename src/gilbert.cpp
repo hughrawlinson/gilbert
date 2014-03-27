@@ -47,7 +47,6 @@ void gilbert::setup(){
 			freq[i][j] = 0;
 		}
 	}
-    audioFinished = true;
 }
 
 //--------------------------------------------------------------
@@ -57,13 +56,11 @@ void gilbert::update(){
 
 //--------------------------------------------------------------
 void gilbert::draw(){
-    if(!audioFinished){
-        return;
-    }
     
     if(ofGetElapsedTimeMillis() < 1000){
         calcRoomRMS(analysis.calcRMS(buffer,BUFFER_SIZE));
     }
+
     
     ofPushStyle();
     ofSetColor(255);
@@ -108,11 +105,11 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         for(int i=0; i<minBufferSize; i++){
             aBuffer.push_back(input[i]);
             if(aBuffer.size() >= 88200){
-                aPressed=false;
                 std::vector<float> aExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
                 sfs info = analysis.analyseHitBuffer(aExactHit, "a");
                 inputSfsSet.push_back(info);
                 analysis.writeWAV(aExactHit, aExactHit.size(), "a", info);
+                aPressed=false;
                 break;
             }
         }
@@ -121,11 +118,11 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         for(int i=0; i<minBufferSize; i++){
             bBuffer.push_back(input[i]);
             if(bBuffer.size() >= 88200){
-                bPressed=false;
-                std::vector<float> bExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                std::vector<float> bExactHit = analysis.getExactHit(bBuffer,maxRoomRMS);
                 sfs info = analysis.analyseHitBuffer(bExactHit, "b");
                 inputSfsSet.push_back(info);
                 analysis.writeWAV(bExactHit, bExactHit.size(), "b", info);
+                bPressed=false;
                 break;
             }
         }
@@ -134,11 +131,11 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         for(int i=0; i<minBufferSize; i++){
             cBuffer.push_back(input[i]);
             if(cBuffer.size() >= 88200){
-                cPressed=false;
-                std::vector<float> cExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                std::vector<float> cExactHit = analysis.getExactHit(cBuffer,maxRoomRMS);
                 sfs info = analysis.analyseHitBuffer(cExactHit, "c");
                 inputSfsSet.push_back(info);
                 analysis.writeWAV(cExactHit, cExactHit.size(), "c", info);
+                cPressed=false;
                 break;
             }
         }
@@ -147,11 +144,11 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
         for(int i=0; i<minBufferSize; i++){
             dBuffer.push_back(input[i]);
             if(dBuffer.size() >= 88200){
-                dPressed=false;
-                std::vector<float> dExactHit = analysis.getExactHit(aBuffer,maxRoomRMS);
+                std::vector<float> dExactHit = analysis.getExactHit(dBuffer,maxRoomRMS);
                 sfs info = analysis.analyseHitBuffer(dExactHit, "d");
                 inputSfsSet.push_back(info);
                 analysis.writeWAV(dExactHit, dExactHit.size(), "d", info);
+                dPressed=false;
                 break;
             }
         }
@@ -159,20 +156,37 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
     
     myfft.powerSpectrum(0, (int)BUFFER_SIZE/2, buffer, BUFFER_SIZE, magnitude, phase, power, &avg_power);
     
-    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS && inputSfsSet.size()>0){
-        hitDetected = true;
+    if(analysis.calcRMS(buffer, BUFFER_SIZE) >= maxRoomRMS*5 && inputSfsSet.size()>0){
+            hitDetected = true;
+        //ofLog(OF_LOG_NOTICE, "Max Room : %f", maxRoomRMS);
     }
+    
     if(hitDetected){
         for (int i = 0 ; i<bufferSize; i++) {
             liveHitBuffer.push_back(buffer[i]);
         }
         if (liveHitBuffer.size() >= 2048){
-            sfs info = analysis.analyseHitBuffer(liveHitBuffer, "static");
-            inputSfsSet.push_back(info);
-            liveHitBuffer = std::vector<float>(1,0);
+
+            liveHit =  analysis.analyseHitBuffer(liveHitBuffer, "static");
+            liveHitBuffer = std::vector<float>(0,0);
+
+            string soundid = lookupClosest(liveHit);
+            if(soundid=="a" && !kick.getIsPlaying()){
+                kick.play();
+            }
+            if(soundid=="b" && !snare.getIsPlaying()){
+                snare.play();
+            }
+            if(soundid=="c" && !hat.getIsPlaying()){
+                hat.play();
+            }
+            if(soundid=="d" && !crash.getIsPlaying()){
+                crash.play();
+            }
             hitDetected = false;
         }
     }
+}
 
         // get start time -> how
         // aside: how = run rms on like 16 samples
@@ -186,27 +200,16 @@ void gilbert::audioIn(float *input, int bufferSize, int nChannels){
             // grab samples and append to z
             // calc sc on z
             // run distance
-        sfs input1 = {.id="static",.centroid=analysis.calcSC(power,256),.rms=analysis.calcRMS(buffer, BUFFER_SIZE)};
-        string soundid = lookupClosest(input1);
-        if(soundid=="a" && !kick.getIsPlaying()){
-            kick.play();
-        }
-        if(soundid=="b" && !snare.getIsPlaying()){
-            snare.play();
-        }
-        if(soundid=="c" && !hat.getIsPlaying()){
-            hat.play();
-        }
-        if(soundid=="d" && !crash.getIsPlaying()){
-            crash.play();
-        }
-    }
-    audioFinished = true;
-}
+    
+//    sfs input1 = {.id="static",
+//                    .centroid=analysis.calcSC(liveHitBuffer),
+//                    .rms=analysis.calcRMS(liveHitBuffer)
+//                };
+  
 
 //--------------------------------------------------------------
-string gilbert::lookupClosest(sfs input){
-    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
+string gilbert::lookupClosest(sfs input){git
+//    std::cout << input.id + ", " + ofToString(input.centroid) + ", " + ofToString(input.rms) << std::endl;
     sfs closest;
     float dist = 0;
     float closestDist=1000000000.0f;
@@ -215,10 +218,11 @@ string gilbert::lookupClosest(sfs input){
         if(dist<closestDist){
             closestDist=dist;
             closest = inputSfsSet[i];
+            std::cout << closestDist << std::endl;
         }
     }
     std::cout << closest.id + ", " + ofToString(closest.centroid) + ", " + ofToString(closest.rms) << std::endl;
-    if(closestDist<2){
+    if(closestDist<0.5){
         return closest.id;
     }
     else{
@@ -265,6 +269,7 @@ void gilbert::guiEvent(ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void gilbert::calcRoomRMS(float currRMS){
+    maxRoomRMS = 0.001;
     if(currRMS > maxRoomRMS){
         maxRoomRMS = currRMS;
     }
